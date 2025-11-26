@@ -1,15 +1,19 @@
-export const mintNFT = async (imageData: string) => {
+export const mintNFT = async (imageData: string, recipientAddress?: string) => {
   try {
     const response = await fetch('/api/mint', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: imageData }),
+      body: JSON.stringify({ 
+        image: imageData,
+        recipientAddress,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to mint NFT');
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to mint NFT');
     }
 
     return await response.json();
@@ -18,4 +22,3 @@ export const mintNFT = async (imageData: string) => {
     throw error;
   }
 };
-

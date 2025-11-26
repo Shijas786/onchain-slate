@@ -9,20 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pinata/sdk": "^2.1.0",
+    "@reown/appkit": "^1.8.14",
+    "@reown/appkit-adapter-wagmi": "^1.8.14",
+    "@tanstack/react-query": "^5.90.11",
+    "lucide-react": "^0.378.0",
+    "next": "14.2.3",
+    "porto": "^0.2.37",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.3",
-    "lucide-react": "^0.378.0"
+    "viem": "^2.40.3",
+    "wagmi": "^3.0.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "autoprefixer": "^10.0.0",
     "eslint": "^8",
-    "eslint-config-next": "14.2.3"
+    "eslint-config-next": "14.2.3",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
