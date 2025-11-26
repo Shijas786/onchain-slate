@@ -11,6 +11,7 @@ import { FarcasterProvider } from '@/components/FarcasterProvider'
 import { base as wagmiBase, baseSepolia as wagmiBaseSepolia } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
 import sdk from '@farcaster/miniapp-sdk'
+import type { EIP1193Provider } from 'viem'
 
 const queryClient = new QueryClient()
 
@@ -42,16 +43,14 @@ if (projectId) {
   })
 }
 
+let cachedFarcasterProvider: EIP1193Provider | undefined
+
 const farcasterConnector = injected({
   target: {
     id: 'farcaster-miniapp',
     name: 'Farcaster Mini App',
-    provider: async () => {
-      try {
-        return await sdk.wallet.getEthereumProvider()
-      } catch {
-        return undefined
-      }
+    provider(window) {
+      return cachedFarcasterProvider ?? (window as any)?.farcasterEthereum
     },
   },
   shimDisconnect: true,
@@ -93,6 +92,11 @@ export default function ContextProvider({
     const detectMiniApp = async () => {
       try {
         await sdk.context
+        const provider = await sdk.wallet.getEthereumProvider()
+        cachedFarcasterProvider = provider
+        if (typeof window !== 'undefined') {
+          ;(window as any).farcasterEthereum = provider
+        }
         if (cancelled) return
         setActiveConfig(miniAppWagmiConfig as Config)
         setInitialState(undefined)
