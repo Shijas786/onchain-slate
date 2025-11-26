@@ -59,7 +59,7 @@ export default function RecentDrawings() {
               owner: to || '',
               imageUrl,
               name: metadata.name || `Drawing #${tokenId}`,
-              blockNumber: log.blockNumber || 0n,
+              blockNumber: log.blockNumber ?? BigInt(0),
             };
           } catch (err) {
             console.error('Error fetching metadata for token', log.args.tokenId, err);
