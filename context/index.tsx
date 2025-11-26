@@ -57,7 +57,6 @@ const farcasterConnector = injected({
 })
 
 const miniAppWagmiConfig = createConfig({
-  autoConnect: true,
   chains: [wagmiBaseSepolia, wagmiBase],
   transports: {
     [wagmiBaseSepolia.id]: http(),
@@ -93,7 +92,7 @@ export default function ContextProvider({
       try {
         await sdk.context
         const provider = await sdk.wallet.getEthereumProvider()
-        cachedFarcasterProvider = provider
+        cachedFarcasterProvider = provider as EIP1193Provider
         if (typeof window !== 'undefined') {
           ;(window as any).farcasterEthereum = provider
         }

@@ -24,8 +24,6 @@ const COLORS = [
 
 const BRUSH_SIZES = [4, 8, 16];
 
-const DRAWING_NFT_CONTRACT_ADDRESS = getDrawingNftAddress();
-
 export default function Home() {
   const canvasRef = useRef<DrawingCanvasRef>(null);
   const [color, setColor] = useState(COLORS[0]);
@@ -59,11 +57,25 @@ export default function Home() {
 
   const canSignTransaction = Boolean(isWagmiConnected && walletClient && wagmiAddress);
 
+  const drawingNftAddress = useMemo(() => {
+    try {
+      return getDrawingNftAddress();
+    } catch {
+      return null;
+    }
+  }, []);
+
   const handleClear = () => {
     canvasRef.current?.clear();
   };
 
   const handleMint = async () => {
+    if (!drawingNftAddress) {
+      setStatus({ type: 'error', message: 'Contract address not configured' });
+      setTimeout(() => setStatus({ type: null, message: '' }), 3000);
+      return;
+    }
+
     if (!canSignTransaction || !walletClient || !wagmiAddress) {
       setStatus({ type: 'error', message: 'Connect your wallet before minting' });
       setTimeout(() => setStatus({ type: null, message: '' }), 3000);
@@ -92,7 +104,7 @@ export default function Home() {
       const preparation = await prepareMint(image);
 
       const txHash = await walletClient.writeContract({
-        address: DRAWING_NFT_CONTRACT_ADDRESS,
+        address: drawingNftAddress,
         abi: drawingNFTAbi,
         functionName: 'mint',
         args: [mintRecipient as `0x${string}`, preparation.metadataIpfsUri],

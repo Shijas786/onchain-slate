@@ -17,6 +17,7 @@ const nextConfig = {
       '@coinbase/wallet-sdk': false,
       '@metamask/sdk': false,
       '@walletconnect/ethereum-provider': false,
+      '@base-org/account': false,
     };
     return config;
   },

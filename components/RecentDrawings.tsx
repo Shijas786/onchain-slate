@@ -26,7 +26,14 @@ export default function RecentDrawings() {
 
     try {
       setIsLoading(true);
-      const contractAddress = getDrawingNftAddress();
+      let contractAddress: `0x${string}`;
+      try {
+        contractAddress = getDrawingNftAddress();
+      } catch {
+        console.error('Contract address not configured');
+        setIsLoading(false);
+        return;
+      }
 
       // Get the current block number to limit the search range if needed
       // For now, we'll fetch all events and take the last 10, 
