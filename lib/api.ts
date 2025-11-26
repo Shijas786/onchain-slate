@@ -1,4 +1,13 @@
-export const mintNFT = async (imageData: string, recipientAddress?: string) => {
+export interface MintPreparationResult {
+  metadataIpfsUri: string;
+  metadataGatewayUrl: string;
+  imageIpfsUri: string;
+  imageGatewayUrl: string;
+  suggestedName: string;
+  timestamp: number;
+}
+
+export const prepareMint = async (imageData: string): Promise<MintPreparationResult> => {
   try {
     const response = await fetch('/api/mint', {
       method: 'POST',
@@ -7,7 +16,6 @@ export const mintNFT = async (imageData: string, recipientAddress?: string) => {
       },
       body: JSON.stringify({ 
         image: imageData,
-        recipientAddress,
       }),
     });
 
@@ -18,7 +26,7 @@ export const mintNFT = async (imageData: string, recipientAddress?: string) => {
 
     return await response.json();
   } catch (error) {
-    console.error('Minting error:', error);
+    console.error('Mint preparation error:', error);
     throw error;
   }
 };

@@ -1,13 +1,16 @@
 // context/index.tsx
 'use client'
 
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useMemo, useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WagmiProvider, cookieToInitialState, type Config } from 'wagmi'
+import { WagmiProvider, cookieToInitialState, createConfig, http, type Config } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
-import { config, networks, projectId, wagmiAdapter } from '@/config'
+import { config as appKitWagmiConfig, networks, projectId, wagmiAdapter } from '@/config'
 import { baseSepolia } from '@reown/appkit/networks'
 import { FarcasterProvider } from '@/components/FarcasterProvider'
+import { base as wagmiBase, baseSepolia as wagmiBaseSepolia } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
+import sdk from '@farcaster/miniapp-sdk'
 
 const queryClient = new QueryClient()
 
@@ -39,6 +42,32 @@ if (projectId) {
   })
 }
 
+const farcasterConnector = injected({
+  target: {
+    id: 'farcaster-miniapp',
+    name: 'Farcaster Mini App',
+    provider: async () => {
+      try {
+        return await sdk.wallet.getEthereumProvider()
+      } catch {
+        return undefined
+      }
+    },
+  },
+  shimDisconnect: true,
+})
+
+const miniAppWagmiConfig = createConfig({
+  autoConnect: true,
+  chains: [wagmiBaseSepolia, wagmiBase],
+  transports: {
+    [wagmiBaseSepolia.id]: http(),
+    [wagmiBase.id]: http(),
+  },
+  connectors: [farcasterConnector],
+  ssr: true,
+})
+
 export default function ContextProvider({
   children,
   cookies,
@@ -46,10 +75,43 @@ export default function ContextProvider({
   children: ReactNode
   cookies: string | null
 }) {
-  const initialState = cookieToInitialState(config as Config, cookies)
+  const defaultInitialState = useMemo(
+    () => cookieToInitialState(appKitWagmiConfig as Config, cookies),
+    [cookies]
+  )
+
+  const [activeConfig, setActiveConfig] = useState<Config>(appKitWagmiConfig as Config)
+  const [initialState, setInitialState] = useState(defaultInitialState)
+
+  useEffect(() => {
+    setInitialState(defaultInitialState)
+  }, [defaultInitialState])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const detectMiniApp = async () => {
+      try {
+        await sdk.context
+        if (cancelled) return
+        setActiveConfig(miniAppWagmiConfig as Config)
+        setInitialState(undefined)
+      } catch {
+        if (cancelled) return
+        setActiveConfig(appKitWagmiConfig as Config)
+        setInitialState(defaultInitialState)
+      }
+    }
+
+    detectMiniApp()
+
+    return () => {
+      cancelled = true
+    }
+  }, [defaultInitialState])
 
   return (
-    <WagmiProvider config={config as Config} initialState={initialState}>
+    <WagmiProvider config={activeConfig} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
         <FarcasterProvider>
           {children}

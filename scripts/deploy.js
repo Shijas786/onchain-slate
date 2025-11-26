@@ -28,7 +28,7 @@ async function main() {
   
   console.log("\n=== Next Steps ===");
   console.log("1. Add contract address to .env.local:");
-  console.log(`   DRAWING_NFT_CONTRACT_ADDRESS=${contractAddress}`);
+  console.log(`   NEXT_PUBLIC_DRAWING_NFT_CONTRACT_ADDRESS=${contractAddress}`);
   console.log("\n2. Verify on Basescan:");
   console.log(`   npx hardhat verify --network ${hre.network.name} ${contractAddress}`);
 }
