@@ -12,6 +12,8 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@gemini-wallet/core': false,
+      '@solana/kit': false,
+      'axios': false,
     };
     return config;
   },
