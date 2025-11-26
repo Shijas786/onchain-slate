@@ -14,6 +14,9 @@ const nextConfig = {
       '@gemini-wallet/core': false,
       '@solana/kit': false,
       'axios': false,
+      '@coinbase/wallet-sdk': false,
+      '@metamask/sdk': false,
+      '@walletconnect/ethereum-provider': false,
     };
     return config;
   },
