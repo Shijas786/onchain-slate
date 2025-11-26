@@ -7,6 +7,7 @@ import { WagmiProvider, cookieToInitialState, type Config } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
 import { config, networks, projectId, wagmiAdapter } from '@/config'
 import { baseSepolia } from '@reown/appkit/networks'
+import { FarcasterProvider } from '@/components/FarcasterProvider'
 
 const queryClient = new QueryClient()
 
@@ -49,8 +50,11 @@ export default function ContextProvider({
 
   return (
     <WagmiProvider config={config as Config} initialState={initialState}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <FarcasterProvider>
+          {children}
+        </FarcasterProvider>
+      </QueryClientProvider>
     </WagmiProvider>
   )
 }
-

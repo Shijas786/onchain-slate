@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas';
 import { mintNFT } from '@/lib/api';
 import { Eraser, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { useAccount } from 'wagmi';
+import { useFarcaster } from '@/components/FarcasterProvider';
 
 const COLORS = [
   '#000000', // Black
@@ -26,15 +27,38 @@ export default function Home() {
   const [isMinting, setIsMinting] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
-  // Get connected wallet address
-  const { address, isConnected } = useAccount();
+  // Get connected wallet address from Wagmi
+  const { address: wagmiAddress, isConnected: isWagmiConnected } = useAccount();
+  
+  // Get Farcaster context
+  const { 
+    isInFrame, 
+    user: farcasterUser, 
+    isSignedIn: isFarcasterSignedIn,
+    isSigningIn: isFarcasterSigningIn,
+    signIn: farcasterSignIn,
+    walletAddress: farcasterWalletAddress,
+    error: farcasterError,
+  } = useFarcaster();
+
+  // Determine the active wallet address (prioritize Farcaster in frame, otherwise Wagmi)
+  const activeAddress = useMemo(() => {
+    if (isInFrame && farcasterWalletAddress) {
+      return farcasterWalletAddress;
+    }
+    return wagmiAddress;
+  }, [isInFrame, farcasterWalletAddress, wagmiAddress]);
+
+  const isConnected = useMemo(() => {
+    return isWagmiConnected || (isInFrame && isFarcasterSignedIn);
+  }, [isWagmiConnected, isInFrame, isFarcasterSignedIn]);
 
   const handleClear = () => {
     canvasRef.current?.clear();
   };
 
   const handleMint = async () => {
-    if (!isConnected || !address) {
+    if (!isConnected || !activeAddress) {
       setStatus({ type: 'error', message: 'Please connect your wallet first' });
       setTimeout(() => setStatus({ type: null, message: '' }), 3000);
       return;
@@ -47,16 +71,21 @@ export default function Home() {
     setStatus({ type: null, message: '' });
 
     try {
-      // Strip prefix if needed, but usually API handles data URI
-      // const base64 = image.split(',')[1]; 
-      const result = await mintNFT(image, address);
+      const result = await mintNFT(image, activeAddress);
       setStatus({ type: 'success', message: `NFT Minted! TX: ${result.txHash?.slice(0, 10)}...` });
     } catch (error) {
       setStatus({ type: 'error', message: 'Failed to mint NFT. Try again.' });
     } finally {
       setIsMinting(false);
-      // Clear status after 5 seconds
       setTimeout(() => setStatus({ type: null, message: '' }), 5000);
+    }
+  };
+
+  const handleFarcasterSignIn = async () => {
+    await farcasterSignIn();
+    if (farcasterError) {
+      setStatus({ type: 'error', message: farcasterError });
+      setTimeout(() => setStatus({ type: null, message: '' }), 3000);
     }
   };
 
@@ -65,7 +94,7 @@ export default function Home() {
       <div className="w-full max-w-3xl flex flex-col gap-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
               <Sparkles className="w-8 h-8 text-blue-500" />
@@ -74,10 +103,56 @@ export default function Home() {
             <p className="text-gray-500 text-sm md:text-base">Draw your masterpiece and mint it as an NFT on Base</p>
           </div>
           
-          {/* Wallet Connect Button */}
-          <div className="flex items-center gap-2">
-            <appkit-network-button />
-            <appkit-button />
+          {/* Auth Section */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Farcaster User Badge (when in frame) */}
+            {isInFrame && farcasterUser && (
+              <div className="flex items-center gap-2 bg-purple-100 text-purple-800 px-3 py-1.5 rounded-full text-sm">
+                {farcasterUser.pfpUrl && (
+                  <img 
+                    src={farcasterUser.pfpUrl} 
+                    alt={farcasterUser.displayName || farcasterUser.username || 'User'} 
+                    className="w-5 h-5 rounded-full"
+                  />
+                )}
+                <span className="font-medium">
+                  {farcasterUser.displayName || `@${farcasterUser.username}` || `FID: ${farcasterUser.fid}`}
+                </span>
+              </div>
+            )}
+
+            {/* Farcaster Sign In Button (when in frame but not signed in) */}
+            {isInFrame && !isFarcasterSignedIn && (
+              <button
+                onClick={handleFarcasterSignIn}
+                disabled={isFarcasterSigningIn}
+                className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
+              >
+                {isFarcasterSigningIn ? (
+                  <>
+                    <Loader2 size={16} className="animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" viewBox="0 0 1000 1000" fill="currentColor">
+                      <path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z"/>
+                      <path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z"/>
+                      <path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z"/>
+                    </svg>
+                    Sign in with Farcaster
+                  </>
+                )}
+              </button>
+            )}
+
+            {/* Wallet Connect Buttons (when not in frame or as additional option) */}
+            {!isInFrame && (
+              <>
+                <appkit-network-button />
+                <appkit-button />
+              </>
+            )}
           </div>
         </div>
 
@@ -164,9 +239,13 @@ export default function Home() {
         </div>
 
         {/* Connected Address Display */}
-        {isConnected && address && (
+        {isConnected && activeAddress && (
           <div className="text-center text-sm text-gray-500">
-            Connected: <span className="font-mono text-gray-700">{address.slice(0, 6)}...{address.slice(-4)}</span>
+            {isInFrame && isFarcasterSignedIn ? (
+              <span>Minting to: <span className="font-mono text-purple-700">{activeAddress.slice(0, 6)}...{activeAddress.slice(-4)}</span></span>
+            ) : (
+              <span>Connected: <span className="font-mono text-gray-700">{activeAddress.slice(0, 6)}...{activeAddress.slice(-4)}</span></span>
+            )}
           </div>
         )}
 
