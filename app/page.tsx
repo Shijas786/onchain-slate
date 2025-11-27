@@ -10,6 +10,7 @@ import { useFarcaster } from '@/components/FarcasterProvider';
 import { isAddress } from 'viem';
 import Image from 'next/image';
 import RecentDrawings from '@/components/RecentDrawings';
+import { Logo } from '@/components/Logo';
 
 const COLORS = [
   '#000000', // Black
@@ -35,11 +36,11 @@ export default function Home() {
   const { address: wagmiAddress, isConnected: isWagmiConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
-  
+
   // Get Farcaster context
-  const { 
-    isInFrame, 
-    user: farcasterUser, 
+  const {
+    isInFrame,
+    user: farcasterUser,
     isSignedIn: isFarcasterSignedIn,
     isSigningIn: isFarcasterSigningIn,
     signIn: farcasterSignIn,
@@ -150,17 +151,17 @@ export default function Home() {
       <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         {/* Left Panel - Drawing Area */}
         <div className="flex-1 flex flex-col gap-6 max-w-3xl mx-auto w-full">
-          
+
           {/* Header */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="space-y-1">
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                <Sparkles className="w-8 h-8 text-blue-500" />
+                <Logo className="w-10 h-10" />
                 Onchain Slate
               </h1>
               <p className="text-gray-500 text-sm md:text-base">Draw your masterpiece and mint it as an NFT on Base</p>
             </div>
-            
+
             {/* Auth Section */}
             <div className="flex items-center gap-2 flex-wrap">
               {/* Farcaster User Badge (when in frame) */}
@@ -197,9 +198,9 @@ export default function Home() {
                   ) : (
                     <>
                       <svg className="w-4 h-4" viewBox="0 0 1000 1000" fill="currentColor">
-                        <path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z"/>
-                        <path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z"/>
-                        <path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z"/>
+                        <path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z" />
+                        <path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z" />
+                        <path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z" />
                       </svg>
                       Sign in with Farcaster
                     </>
@@ -219,25 +220,24 @@ export default function Home() {
 
           {/* Canvas Container */}
           <div className="aspect-square w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200/50 ring-1 ring-black/5">
-             <DrawingCanvas 
-               ref={canvasRef} 
-               color={color} 
-               brushSize={brushSize} 
-             />
+            <DrawingCanvas
+              ref={canvasRef}
+              color={color}
+              brushSize={brushSize}
+            />
           </div>
 
           {/* Toolbar */}
           <div className="bg-gray-900 text-white p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
-            
+
             {/* Colors */}
             <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 px-2">
               {COLORS.map((c) => (
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all shrink-0 ${
-                    color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
-                  }`}
+                  className={`w-8 h-8 rounded-full border-2 transition-all shrink-0 ${color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
+                    }`}
                   style={{ backgroundColor: c }}
                   aria-label={`Select color ${c}`}
                 />
@@ -252,14 +252,13 @@ export default function Home() {
                 <button
                   key={size}
                   onClick={() => setBrushSize(size)}
-                  className={`p-2 rounded-lg transition-colors ${
-                    brushSize === size ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
-                  }`}
+                  className={`p-2 rounded-lg transition-colors ${brushSize === size ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+                    }`}
                   aria-label={`Select brush size ${size}`}
                 >
-                  <div 
-                    className="bg-current rounded-full" 
-                    style={{ width: Math.max(4, size/2 + 4), height: Math.max(4, size/2 + 4) }} 
+                  <div
+                    className="bg-current rounded-full"
+                    style={{ width: Math.max(4, size / 2 + 4), height: Math.max(4, size / 2 + 4) }}
                   />
                 </button>
               ))}
@@ -276,7 +275,7 @@ export default function Home() {
               >
                 <Eraser size={20} />
               </button>
-              
+
               <button
                 onClick={handleMint}
                 disabled={isMinting || !canSignTransaction || !mintRecipient}
@@ -325,9 +324,8 @@ export default function Home() {
 
           {/* Status Message */}
           {status.message && (
-            <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 z-50 ${
-              status.type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
-            }`}>
+            <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 z-50 ${status.type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
+              }`}>
               {status.type === 'success' && <CheckCircle2 size={18} />}
               <span className="text-sm font-medium">{status.message}</span>
             </div>
