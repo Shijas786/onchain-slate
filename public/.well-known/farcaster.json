@@ -2,8 +2,8 @@
   "name": "OnchainSlate",
   "iconUrl": "https://onchain-slate.vercel.app/icon.png",
   "subtitle": "Draw and Mint Instantly",
-  "description": "Sketch something, mint it, and own it",
-  "primaryCategory": "art",
+  "description": "Sketch something,mint it,and own it",
+  "primaryCategory": "games",
   "screenshotUrls": [
     "https://onchain-slate.vercel.app/shot1.png",
     "https://onchain-slate.vercel.app/shot2.png"
