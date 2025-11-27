@@ -74,7 +74,9 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
           }
         }
         
-        // Signal to the frame that we're ready
+        if (typeof window !== 'undefined') {
+          window.appkitReady = true;
+        }
         await sdk.actions.ready();
         setIsSDKLoaded(true);
       } catch (err) {
@@ -82,6 +84,9 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
         setIsSDKLoaded(true);
         setIsInFrame(false);
         try {
+          if (typeof window !== 'undefined') {
+            window.appkitReady = true;
+          }
           await sdk.actions.ready();
         } catch {
           // ignore if not available
