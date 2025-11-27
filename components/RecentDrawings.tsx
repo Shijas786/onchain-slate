@@ -91,54 +91,54 @@ export default function RecentDrawings() {
   if (!publicClient) return null;
 
   return (
-    <div className="bg-[#24283b] p-6 border-4 border-black shadow-[8px_8px_0px_0px_#000] h-full max-h-[800px] overflow-y-auto flex flex-col gap-6 scrollbar-thin scrollbar-thumb-[#4CC9F0] scrollbar-track-[#1e293b]">
-      <div className="flex items-center justify-between sticky top-0 bg-[#24283b] p-2 z-10 border-b-4 border-black pb-4">
-        <h2 className="text-2xl font-black text-white tracking-tight uppercase drop-shadow-[2px_2px_0_#000]">
-          Gallery 🎨
+    <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border-2 border-dashed border-gray-300 h-full max-h-[800px] overflow-y-auto flex flex-col gap-4 transform rotate-1 hover:rotate-0 transition-transform duration-300">
+      <div className="flex items-center justify-between sticky top-0 bg-white/90 p-2 rounded-lg z-10 border-b-2 border-gray-100">
+        <h2 className="text-2xl font-bold text-gray-800 tracking-tight font-handwriting">
+          Recent Masterpieces 🎨
         </h2>
         <button
           onClick={fetchDrawings}
-          className="p-2 bg-white border-2 border-black shadow-[2px_2px_0px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all"
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           title="Refresh drawings"
         >
-          <RefreshCcw size={20} className={`text-black ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCcw size={20} className={isLoading ? 'animate-spin text-blue-500' : 'text-gray-500'} />
         </button>
       </div>
 
       {isLoading && drawings.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-4">
-          <Loader2 size={40} className="animate-spin text-[#FFD028]" />
-          <span className="font-bold uppercase tracking-widest">Loading...</span>
+        <div className="flex flex-col items-center justify-center py-12 text-gray-400 gap-2">
+          <Loader2 size={32} className="animate-spin" />
+          <span className="font-medium">Loading gallery...</span>
         </div>
       ) : drawings.length === 0 ? (
-        <div className="text-center py-12 text-gray-500 font-bold uppercase">
-          No drawings yet.<br />Be the first!
+        <div className="text-center py-12 text-gray-500 italic">
+          No drawings yet. Be the first!
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
           {drawings.map((drawing) => (
             <div
               key={drawing.tokenId}
-              className="group bg-white p-3 border-4 border-black shadow-[6px_6px_0px_0px_#000] hover:shadow-[2px_2px_0px_0px_#000] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-200"
+              className="group bg-white rounded-xl p-3 shadow-sm border border-gray-200 hover:shadow-md hover:scale-[1.02] transition-all duration-200"
             >
-              <div className="aspect-square w-full overflow-hidden border-2 border-black bg-gray-100 mb-3 relative">
+              <div className="aspect-square w-full overflow-hidden rounded-lg bg-gray-50 mb-3 relative border border-gray-100">
                 <Image
                   src={drawing.imageUrl}
                   alt={drawing.name}
                   fill
-                  className="object-contain p-2"
+                  className="object-contain"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   unoptimized
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="font-black text-black truncate text-lg uppercase">
+                <span className="font-bold text-gray-800 truncate text-lg font-handwriting">
                   {drawing.name}
                 </span>
-                <div className="flex justify-between items-center text-xs font-bold font-mono">
-                  <span className="bg-black text-white px-2 py-0.5">#{drawing.tokenId}</span>
-                  <span title={drawing.owner} className="text-gray-600">
-                    {drawing.owner.slice(0, 6)}...{drawing.owner.slice(-4)}
+                <div className="flex justify-between items-center text-xs text-gray-500 font-mono">
+                  <span>#{drawing.tokenId}</span>
+                  <span title={drawing.owner}>
+                    by {drawing.owner.slice(0, 6)}...{drawing.owner.slice(-4)}
                   </span>
                 </div>
               </div>
