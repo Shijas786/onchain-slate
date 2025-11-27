@@ -75,12 +75,17 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
         }
         
         // Signal to the frame that we're ready
-        sdk.actions.ready();
+        await sdk.actions.ready();
         setIsSDKLoaded(true);
       } catch (err) {
         console.log('Not running in a Farcaster frame');
         setIsSDKLoaded(true);
         setIsInFrame(false);
+        try {
+          await sdk.actions.ready();
+        } catch {
+          // ignore if not available
+        }
       }
     };
 
