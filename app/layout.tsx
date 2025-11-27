@@ -9,10 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 const siteUrl = "https://onchain-slate.vercel.app";
 
 export const metadata: Metadata = {
-  title: "OnchainSlate – Mint Your Drawings Onchain",
+  title: "OnchainSlate – Mint NFTs",
   description: "Turn your sketches into NFTs in seconds.",
   openGraph: {
-    title: "OnchainSlate – Mint Your Drawings Onchain",
+    title: "OnchainSlate – Mint NFTs",
     description: "Turn your sketches into NFTs in seconds.",
     type: "website",
     url: siteUrl,
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "OnchainSlate – Mint Your Drawings Onchain",
+    title: "OnchainSlate – Mint NFTs",
     description: "Turn your sketches into NFTs in seconds.",
     images: [`${siteUrl}/social.png`],
   },
