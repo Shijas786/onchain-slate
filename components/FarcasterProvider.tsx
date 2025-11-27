@@ -42,6 +42,12 @@ interface FarcasterProviderProps {
   children: ReactNode;
 }
 
+declare global {
+  interface Window {
+    appkitReady?: boolean;
+  }
+}
+
 export function FarcasterProvider({ children }: FarcasterProviderProps) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [isInFrame, setIsInFrame] = useState(false);
