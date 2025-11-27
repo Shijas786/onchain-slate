@@ -6,6 +6,8 @@ import ContextProvider from "@/context";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const siteUrl = "https://onchain-slate.vercel.app";
+
 export const metadata: Metadata = {
   title: "OnchainSlate – Mint Your Drawings Onchain",
   description: "Turn your sketches into NFTs in seconds.",
@@ -13,10 +15,10 @@ export const metadata: Metadata = {
     title: "OnchainSlate – Mint Your Drawings Onchain",
     description: "Turn your sketches into NFTs in seconds.",
     type: "website",
-    url: "https://onchainslate.app",
+    url: siteUrl,
     images: [
       {
-        url: "https://onchainslate.app/social.png",
+        url: `${siteUrl}/social.png`,
         width: 1200,
         height: 630,
         alt: "OnchainSlate",
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "OnchainSlate – Mint Your Drawings Onchain",
     description: "Turn your sketches into NFTs in seconds.",
-    images: ["https://onchainslate.app/social.png"],
+    images: [`${siteUrl}/social.png`],
   },
   icons: {
     icon: "/icon.png",
