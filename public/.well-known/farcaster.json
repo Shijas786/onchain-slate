@@ -22,6 +22,8 @@
   "homeUrl": "https://onchainslate.app",
   "webhookUrl": "https://onchainslate.app/api/webhook",
   "accountAssociation": {
-    "type": "custody"
+    "header": "eyJmaWQiOjI1OTkxMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDlmZjdjNTNhNDU3NzcxOGQwOUIxYkZiYTVlRkU2MzFCOTlmY2FmZmMifQ",
+    "payload": "eyJkb21haW4iOiJvbmNoYWluLXNsYXRlLnZlcmNlbC5hcHAifQ",
+    "signature": "zjTypCH0hV3CmFLhw73Px4WIZDHVQvS2s8VB1zoo1ipOmOx0MBTuFzPjkV77eS/cLC18PZrq7gLxgpzGYuptNxs="
   }
 }
