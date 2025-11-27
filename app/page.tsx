@@ -147,67 +147,66 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0f172a] text-white flex flex-col p-4 font-sans selection:bg-pink-500 selection:text-white">
-      {/* Background Glow Effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]" />
-      </div>
+    <main className="min-h-screen bg-[#1a1b26] text-white flex flex-col p-6 font-sans selection:bg-[#FFD028] selection:text-black">
+      {/* Isometric Grid Background Pattern */}
+      <div className="fixed inset-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(#334155 1px, transparent 1px), linear-gradient(to right, #334155 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }}
+      />
 
-      <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 relative z-10">
+      <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 relative z-10">
         {/* Left Panel - Drawing Area */}
-        <div className="flex-1 flex flex-col gap-6 max-w-3xl mx-auto w-full">
+        <div className="flex-1 flex flex-col gap-8 max-w-3xl mx-auto w-full">
 
           {/* Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-3">
-                <div className="relative group">
-                  <div className="absolute -inset-1 bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                  <div className="relative bg-black rounded-xl p-1">
-                    <Logo className="w-12 h-12" />
-                  </div>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <h1 className="text-4xl md:text-5xl font-black tracking-tight flex items-center gap-4 text-white drop-shadow-[4px_4px_0_rgba(0,0,0,1)]">
+                <div className="relative bg-[#FFD028] p-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <Logo className="w-10 h-10" />
                 </div>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-400 via-purple-400 to-cyan-400 drop-shadow-sm">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFD028] to-[#FF6B6B] stroke-black stroke-2">
                   Onchain Slate
                 </span>
               </h1>
-              <p className="text-gray-400 text-sm md:text-base font-medium pl-1">
-                Draw your <span className="text-pink-400">masterpiece</span> and mint it on <span className="text-blue-400">Base</span>
+              <p className="text-gray-400 text-sm md:text-base font-bold tracking-wide uppercase">
+                Draw <span className="text-[#FF6B6B]">Masterpieces</span> • Mint on <span className="text-[#4CC9F0]">Base</span>
               </p>
             </div>
 
             {/* Auth Section */}
-            <div className="flex items-center gap-3 flex-wrap">
-              {/* Farcaster User Badge (when in frame) */}
+            <div className="flex items-center gap-4 flex-wrap">
+              {/* Farcaster User Badge */}
               {isInFrame && farcasterUser && (
-                <div className="flex items-center gap-2 bg-purple-900/50 border border-purple-500/30 text-purple-200 px-4 py-2 rounded-full text-sm backdrop-blur-md shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+                <div className="flex items-center gap-3 bg-[#7C3AED] border-4 border-black text-white px-4 py-2 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   {farcasterUser.pfpUrl && (
                     <Image
                       src={farcasterUser.pfpUrl}
                       alt={farcasterUser.displayName || farcasterUser.username || 'User'}
                       width={24}
                       height={24}
-                      className="rounded-full ring-2 ring-purple-500/50"
+                      className="rounded-none border-2 border-black"
                       unoptimized
                     />
                   )}
-                  <span className="font-bold">
-                    {farcasterUser.displayName || `@${farcasterUser.username}` || `FID: ${farcasterUser.fid}`}
+                  <span>
+                    {farcasterUser.displayName || `@${farcasterUser.username}`}
                   </span>
                 </div>
               )}
 
-              {/* Farcaster Sign In Button (when in frame but not signed in) */}
+              {/* Farcaster Sign In Button */}
               {isInFrame && !isFarcasterSignedIn && (
                 <button
                   onClick={handleFarcasterSignIn}
                   disabled={isFarcasterSigningIn}
-                  className="flex items-center gap-2 bg-[#855DCD] hover:bg-[#7C51C6] text-white px-5 py-2.5 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_4px_0_rgb(100,60,180)] hover:shadow-[0_2px_0_rgb(100,60,180)] translate-y-[-2px] hover:translate-y-[0px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 bg-[#855DCD] hover:bg-[#9F7AEA] text-white px-6 py-3 font-bold border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isFarcasterSigningIn ? (
                     <>
-                      <Loader2 size={18} className="animate-spin" />
+                      <Loader2 size={20} className="animate-spin" />
                       Signing in...
                     </>
                   ) : (
@@ -223,9 +222,9 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Wallet Connect Buttons (when not in frame or as additional option) */}
+              {/* Wallet Connect Buttons */}
               {!isInFrame && (
-                <div className="flex gap-2">
+                <div className="flex gap-3 [&_button]:!border-4 [&_button]:!border-black [&_button]:!shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <appkit-network-button />
                   <appkit-button />
                 </div>
@@ -233,10 +232,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Canvas Container - The "Tablet" Look */}
+          {/* Canvas Container - Isometric Block */}
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 via-purple-600 to-cyan-600 rounded-[20px] opacity-75 blur group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative aspect-square w-full bg-[#1a1b26] rounded-[18px] shadow-2xl overflow-hidden border-[8px] border-[#0f172a]">
+            <div className="relative aspect-square w-full bg-white border-4 border-black shadow-[12px_12px_0px_0px_#334155] overflow-hidden">
               <DrawingCanvas
                 ref={canvasRef}
                 color={color}
@@ -246,7 +244,7 @@ export default function Home() {
           </div>
 
           {/* Toolbar */}
-          <div className="bg-[#1e293b]/80 backdrop-blur-md border border-white/10 p-4 rounded-2xl shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-[#24283b] border-4 border-black p-4 shadow-[8px_8px_0px_0px_#000] flex flex-col md:flex-row items-center justify-between gap-6">
 
             {/* Colors */}
             <div className="flex items-center gap-3 overflow-x-auto max-w-full pb-2 md:pb-0 px-2 scrollbar-hide">
@@ -254,7 +252,9 @@ export default function Home() {
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`w-9 h-9 rounded-full border-[3px] transition-all shrink-0 ${color === c ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.5)]' : 'border-transparent hover:scale-110'
+                  className={`w-10 h-10 border-4 transition-all shrink-0 ${color === c
+                      ? 'border-white scale-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)]'
+                      : 'border-black hover:scale-105'
                     }`}
                   style={{ backgroundColor: c }}
                   aria-label={`Select color ${c}`}
@@ -262,56 +262,58 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="h-px w-full md:w-px md:h-10 bg-white/10" />
+            <div className="h-1 w-full md:w-1 md:h-12 bg-black" />
 
             {/* Brush Size */}
-            <div className="flex items-center gap-3 bg-black/20 p-1.5 rounded-xl">
+            <div className="flex items-center gap-3 bg-black p-2 border-2 border-gray-700">
               {BRUSH_SIZES.map((size) => (
                 <button
                   key={size}
                   onClick={() => setBrushSize(size)}
-                  className={`p-2 rounded-lg transition-all ${brushSize === size ? 'bg-white/20 text-white shadow-sm' : 'text-gray-400 hover:text-white hover:bg-white/10'
+                  className={`p-2 transition-all border-2 ${brushSize === size
+                      ? 'bg-white text-black border-white shadow-[2px_2px_0px_0px_#4CC9F0]'
+                      : 'text-gray-400 border-transparent hover:text-white'
                     }`}
                   aria-label={`Select brush size ${size}`}
                 >
                   <div
-                    className="bg-current rounded-full"
-                    style={{ width: Math.max(4, size / 2 + 4), height: Math.max(4, size / 2 + 4) }}
+                    className="bg-current"
+                    style={{ width: Math.max(6, size / 2 + 6), height: Math.max(6, size / 2 + 6) }}
                   />
                 </button>
               ))}
             </div>
 
-            <div className="h-px w-full md:w-px md:h-10 bg-white/10" />
+            <div className="h-1 w-full md:w-1 md:h-12 bg-black" />
 
             {/* Actions */}
-            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+            <div className="flex items-center gap-4 w-full md:w-auto justify-end">
               <button
                 onClick={handleClear}
-                className="p-3 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-colors"
+                className="p-3 bg-[#FF6B6B] text-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
                 title="Clear Canvas"
               >
-                <Eraser size={22} />
+                <Eraser size={24} />
               </button>
 
               <button
                 onClick={handleMint}
                 disabled={isMinting || !canSignTransaction || !mintRecipient}
-                className={`flex-1 md:flex-none px-8 py-3 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:from-pink-400 hover:via-purple-400 hover:to-cyan-400 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[180px] shadow-[0_4px_0_rgb(160,30,160)] hover:shadow-[0_2px_0_rgb(160,30,160)] translate-y-[-2px] hover:translate-y-[0px] active:translate-y-[2px] active:shadow-none`}
+                className={`flex-1 md:flex-none px-8 py-3 bg-[#4CC9F0] text-black font-black text-lg border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]`}
               >
                 {isMinting ? (
                   <>
-                    <Loader2 size={20} className="animate-spin" />
-                    Minting...
+                    <Loader2 size={24} className="animate-spin" />
+                    MINTING...
                   </>
                 ) : !canSignTransaction ? (
-                  <>Connect Wallet</>
+                  <>CONNECT WALLET</>
                 ) : !mintRecipient ? (
-                  <>Set Recipient</>
+                  <>SET RECIPIENT</>
                 ) : (
                   <>
-                    <Sparkles size={20} className="text-yellow-300" />
-                    Mint NFT
+                    <Sparkles size={24} />
+                    MINT NFT
                   </>
                 )}
               </button>
@@ -320,11 +322,11 @@ export default function Home() {
 
           {/* Connected Address Display */}
           {(mintRecipient || (isWagmiConnected && wagmiAddress)) && (
-            <div className="text-center text-sm text-gray-500 space-y-1 font-mono">
+            <div className="text-center text-sm font-bold font-mono tracking-wider">
               {mintRecipient && (
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-gray-400">Minting to:</span>
-                  <span className={`px-2 py-0.5 rounded bg-white/5 ${isInFrame && isFarcasterSignedIn ? 'text-purple-400 border border-purple-500/30' : 'text-cyan-400 border border-cyan-500/30'}`}>
+                  <span className="text-gray-400 uppercase">Minting to:</span>
+                  <span className={`px-3 py-1 bg-[#1e293b] border-2 border-black text-[#4CC9F0]`}>
                     {mintRecipient.slice(0, 6)}...{mintRecipient.slice(-4)}
                   </span>
                 </div>
@@ -334,12 +336,12 @@ export default function Home() {
 
           {/* Status Message */}
           {status.message && (
-            <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 z-50 border backdrop-blur-md ${status.type === 'success'
-                ? 'bg-green-500/20 text-green-200 border-green-500/50'
-                : 'bg-red-500/20 text-red-200 border-red-500/50'
+            <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-8 py-4 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4 animate-in fade-in slide-in-from-bottom-4 z-50 ${status.type === 'success'
+                ? 'bg-[#10B981] text-white'
+                : 'bg-[#EF4444] text-white'
               }`}>
-              {status.type === 'success' && <CheckCircle2 size={24} className="text-green-400" />}
-              <span className="font-bold text-lg">{status.message}</span>
+              {status.type === 'success' && <CheckCircle2 size={28} />}
+              <span className="font-black text-xl uppercase tracking-wide">{status.message}</span>
             </div>
           )}
         </div>
