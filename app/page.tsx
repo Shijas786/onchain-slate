@@ -147,194 +147,158 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col p-4 font-sans">
-      <div className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-        {/* Left Panel - Drawing Area */}
-        <div className="flex-1 flex flex-col gap-6 max-w-3xl mx-auto w-full">
+    <main className="min-h-screen bg-[#008080] p-4 font-sans flex flex-col items-center justify-center selection:bg-[#000080] selection:text-white">
 
-          {/* Header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                <Logo className="w-10 h-10" />
-                Onchain Slate
-              </h1>
-              <p className="text-gray-500 text-sm md:text-base">Draw your masterpiece and mint it as an NFT on Base</p>
+      {/* Main "Paint" Window */}
+      <div className="w-full max-w-6xl bg-[#c0c0c0] border-[3px] border-t-white border-l-white border-b-black border-r-black shadow-xl flex flex-col">
+
+        {/* Title Bar */}
+        <div className="bg-[#000080] px-2 py-1 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Logo className="w-4 h-4" />
+            <h1 className="text-white font-bold text-sm tracking-wide">Onchain Paint - Untitled</h1>
+          </div>
+          <div className="flex gap-1">
+            <button className="w-4 h-4 bg-[#c0c0c0] border border-t-white border-l-white border-b-black border-r-black flex items-center justify-center active:border-t-black active:border-l-black active:border-b-white active:border-r-white">
+              <div className="w-2 h-0.5 bg-black"></div>
+            </button>
+            <button className="w-4 h-4 bg-[#c0c0c0] border border-t-white border-l-white border-b-black border-r-black flex items-center justify-center active:border-t-black active:border-l-black active:border-b-white active:border-r-white">
+              <div className="w-2 h-2 border border-black border-t-2"></div>
+            </button>
+            <button className="w-4 h-4 bg-[#c0c0c0] border border-t-white border-l-white border-b-black border-r-black flex items-center justify-center active:border-t-black active:border-l-black active:border-b-white active:border-r-white text-[10px] font-bold leading-none pb-1">
+              x
+            </button>
+          </div>
+        </div>
+
+        {/* Menu Bar (Visual Only) */}
+        <div className="flex gap-4 px-2 py-1 text-sm border-b border-gray-400 shadow-[0_1px_0_white]">
+          <span className="underline decoration-1 underline-offset-2">F</span>ile
+          <span className="underline decoration-1 underline-offset-2">E</span>dit
+          <span className="underline decoration-1 underline-offset-2">V</span>iew
+          <span className="underline decoration-1 underline-offset-2">I</span>mage
+          <span className="underline decoration-1 underline-offset-2">O</span>ptions
+          <span className="underline decoration-1 underline-offset-2">H</span>elp
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex flex-col lg:flex-row p-1 gap-1 h-full">
+
+          {/* Left Toolbar (Tools & Colors) */}
+          <div className="w-full lg:w-64 flex flex-col gap-2 shrink-0">
+
+            {/* Tools Panel */}
+            <div className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-gray-500 border-r-gray-500 p-1">
+              <div className="grid grid-cols-2 gap-1 mb-2">
+                <button
+                  onClick={handleClear}
+                  className="h-8 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-black border-r-black active:border-t-black active:border-l-black active:border-b-white active:border-r-white flex items-center justify-center"
+                  title="Clear Canvas"
+                >
+                  <Eraser size={16} />
+                </button>
+                <button className="h-8 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-black border-r-black active:border-t-black active:border-l-black active:border-b-white active:border-r-white flex items-center justify-center">
+                  <Sparkles size={16} />
+                </button>
+              </div>
+
+              {/* Brush Sizes */}
+              <div className="bg-white border-2 border-t-black border-l-black border-b-white border-r-white p-2 mb-2">
+                <div className="flex flex-col gap-2">
+                  {BRUSH_SIZES.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setBrushSize(size)}
+                      className={`flex items-center gap-2 px-2 py-1 hover:bg-[#000080] hover:text-white group ${brushSize === size ? 'bg-[#000080] text-white' : ''}`}
+                    >
+                      <div className={`bg-current rounded-full`} style={{ width: size, height: size }} />
+                      <span className="text-xs">{size}px</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Box */}
+              <div className="border-2 border-t-white border-l-white border-b-gray-500 border-r-gray-500 p-1">
+                <div className="grid grid-cols-4 gap-1">
+                  {COLORS.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setColor(c)}
+                      className={`w-6 h-6 border-2 ${color === c ? 'border-black border-dashed' : 'border-t-gray-500 border-l-gray-500 border-b-white border-r-white'}`}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="w-8 h-8 border-2 border-t-gray-500 border-l-gray-500 border-b-white border-r-white" style={{ backgroundColor: color }} />
+                  <span className="text-xs">Selected</span>
+                </div>
+              </div>
             </div>
 
-            {/* Auth Section */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Farcaster User Badge (when in frame) */}
-              {isInFrame && farcasterUser && (
-                <div className="flex items-center gap-2 bg-purple-100 text-purple-800 px-3 py-1.5 rounded-full text-sm">
-                  {farcasterUser.pfpUrl && (
-                    <Image
-                      src={farcasterUser.pfpUrl}
-                      alt={farcasterUser.displayName || farcasterUser.username || 'User'}
-                      width={20}
-                      height={20}
-                      className="rounded-full"
-                      unoptimized
-                    />
-                  )}
-                  <span className="font-medium">
-                    {farcasterUser.displayName || `@${farcasterUser.username}` || `FID: ${farcasterUser.fid}`}
-                  </span>
-                </div>
-              )}
-
-              {/* Farcaster Sign In Button (when in frame but not signed in) */}
-              {isInFrame && !isFarcasterSignedIn && (
+            {/* Auth / Mint Panel */}
+            <div className="bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-gray-500 border-r-gray-500 p-2 flex flex-col gap-2">
+              {isInFrame && !isFarcasterSignedIn ? (
                 <button
                   onClick={handleFarcasterSignIn}
                   disabled={isFarcasterSigningIn}
-                  className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl font-medium transition-colors disabled:opacity-50"
+                  className="w-full py-1 px-2 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-black border-r-black active:border-t-black active:border-l-black active:border-b-white active:border-r-white text-xs font-bold flex items-center justify-center gap-1"
                 >
-                  {isFarcasterSigningIn ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Signing in...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" viewBox="0 0 1000 1000" fill="currentColor">
-                        <path d="M257.778 155.556H742.222V844.444H671.111V528.889H670.414C662.554 441.677 589.258 373.333 500 373.333C410.742 373.333 337.446 441.677 329.586 528.889H328.889V844.444H257.778V155.556Z" />
-                        <path d="M128.889 253.333L157.778 351.111H182.222V746.667C169.949 746.667 160 756.616 160 768.889V795.556H155.556C143.283 795.556 133.333 805.505 133.333 817.778V844.444H382.222V817.778C382.222 805.505 372.273 795.556 360 795.556H355.556V768.889C355.556 756.616 345.606 746.667 333.333 746.667H306.667V253.333H128.889Z" />
-                        <path d="M675.556 746.667C663.283 746.667 653.333 756.616 653.333 768.889V795.556H648.889C636.616 795.556 626.667 805.505 626.667 817.778V844.444H875.556V817.778C875.556 805.505 865.606 795.556 853.333 795.556H848.889V768.889C848.889 756.616 838.94 746.667 826.667 746.667V351.111H851.111L880 253.333H702.222V746.667H675.556Z" />
-                      </svg>
-                      Sign in with Farcaster
-                    </>
-                  )}
+                  {isFarcasterSigningIn ? <Loader2 size={12} className="animate-spin" /> : 'Sign In'}
                 </button>
-              )}
+              ) : null}
 
-              {/* Wallet Connect Buttons (when not in frame or as additional option) */}
               {!isInFrame && (
-                <>
-                  <appkit-network-button />
+                <div className="scale-75 origin-left">
                   <appkit-button />
-                </>
+                </div>
               )}
-            </div>
-          </div>
-
-          {/* Canvas Container */}
-          <div className="aspect-square w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200/50 ring-1 ring-black/5">
-            <DrawingCanvas
-              ref={canvasRef}
-              color={color}
-              brushSize={brushSize}
-            />
-          </div>
-
-          {/* Toolbar */}
-          <div className="bg-gray-900 text-white p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
-
-            {/* Colors */}
-            <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 px-2">
-              {COLORS.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all shrink-0 ${color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
-                    }`}
-                  style={{ backgroundColor: c }}
-                  aria-label={`Select color ${c}`}
-                />
-              ))}
-            </div>
-
-            <div className="h-px w-full md:w-px md:h-8 bg-gray-700" />
-
-            {/* Brush Size */}
-            <div className="flex items-center gap-3">
-              {BRUSH_SIZES.map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setBrushSize(size)}
-                  className={`p-2 rounded-lg transition-colors ${brushSize === size ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
-                    }`}
-                  aria-label={`Select brush size ${size}`}
-                >
-                  <div
-                    className="bg-current rounded-full"
-                    style={{ width: Math.max(4, size / 2 + 4), height: Math.max(4, size / 2 + 4) }}
-                  />
-                </button>
-              ))}
-            </div>
-
-            <div className="h-px w-full md:w-px md:h-8 bg-gray-700" />
-
-            {/* Actions */}
-            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-              <button
-                onClick={handleClear}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
-                title="Clear Canvas"
-              >
-                <Eraser size={20} />
-              </button>
 
               <button
                 onClick={handleMint}
                 disabled={isMinting || !canSignTransaction || !mintRecipient}
-                className={`flex-1 md:flex-none px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px] shadow-lg shadow-blue-500/25`}
+                className="w-full py-2 px-2 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-black border-r-black active:border-t-black active:border-l-black active:border-b-white active:border-r-white text-sm font-bold flex items-center justify-center gap-2 disabled:text-gray-500"
               >
-                {isMinting ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Minting...
-                  </>
-                ) : !canSignTransaction ? (
-                  <>Connect Wallet</>
-                ) : !mintRecipient ? (
-                  <>Set Recipient</>
-                ) : (
-                  <>
-                    <Sparkles size={18} />
-                    Mint as NFT
-                  </>
-                )}
+                {isMinting ? 'Minting...' : 'MINT NFT'}
               </button>
+            </div>
+
+            {/* Status Bar */}
+            {status.message && (
+              <div className={`p-1 text-xs border border-gray-500 ${status.type === 'error' ? 'text-red-600' : 'text-green-600'}`}>
+                {status.message}
+              </div>
+            )}
+          </div>
+
+          {/* Canvas Area */}
+          <div className="flex-1 bg-[#808080] p-4 overflow-auto border-2 border-t-black border-l-black border-b-white border-r-white shadow-inner">
+            <div className="bg-white shadow-[4px_4px_0_0_rgba(0,0,0,0.2)]">
+              <DrawingCanvas
+                ref={canvasRef}
+                color={color}
+                brushSize={brushSize}
+              />
             </div>
           </div>
 
-          {/* Connected Address Display */}
-          {(mintRecipient || (isWagmiConnected && wagmiAddress)) && (
-            <div className="text-center text-sm text-gray-500 space-y-1">
-              {mintRecipient && (
-                <div>
-                  Minting to:{' '}
-                  <span className={`font-mono ${isInFrame && isFarcasterSignedIn ? 'text-purple-700' : 'text-gray-700'}`}>
-                    {mintRecipient.slice(0, 6)}...{mintRecipient.slice(-4)}
-                  </span>
-                </div>
-              )}
-              {isWagmiConnected && wagmiAddress && (
-                <div>
-                  Signing wallet:{' '}
-                  <span className="font-mono text-gray-700">
-                    {wagmiAddress.slice(0, 6)}...{wagmiAddress.slice(-4)}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
+          {/* Right Panel - Recent Drawings (Now integrated as a sidebar) */}
+          <div className="w-full lg:w-72 shrink-0 bg-[#c0c0c0] border-2 border-t-white border-l-white border-b-gray-500 border-r-gray-500 p-1 flex flex-col">
+            <div className="bg-[#000080] text-white px-1 py-0.5 text-xs font-bold mb-1">Gallery.exe</div>
+            <RecentDrawings />
+          </div>
 
-          {/* Status Message */}
-          {status.message && (
-            <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 px-5 py-3 rounded-full shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 z-50 ${status.type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
-              }`}>
-              {status.type === 'success' && <CheckCircle2 size={18} />}
-              <span className="text-sm font-medium">{status.message}</span>
-            </div>
-          )}
         </div>
 
-        {/* Right Panel - Recent Drawings */}
-        <div className="w-full lg:w-96 shrink-0">
-          <RecentDrawings />
+        {/* Footer Status Bar */}
+        <div className="border-t border-gray-400 p-1 flex gap-2 text-xs text-gray-600 shadow-[0_1px_0_white_inset]">
+          <div className="flex-1 border border-gray-400 px-1 shadow-[1px_1px_0_white]">
+            {mintRecipient ? `Minting to: ${mintRecipient.slice(0, 6)}...` : 'Ready'}
+          </div>
+          <div className="w-24 border border-gray-400 px-1 shadow-[1px_1px_0_white]">
+            {brushSize}px
+          </div>
         </div>
       </div>
     </main>
