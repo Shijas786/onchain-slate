@@ -21,6 +21,23 @@ const nextConfig = {
     };
     return config;
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://warpcast.com https://*.warpcast.com;",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "ALLOWALL",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
