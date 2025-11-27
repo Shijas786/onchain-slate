@@ -1,9 +1,27 @@
 {
+  "name": "OnchainSlate",
+  "iconUrl": "https://onchainslate.app/icon.png",
+  "subtitle": "Draw and Mint Instantly",
+  "description": "OnchainSlate lets you sketch anything, mint it instantly as an NFT, and own your creativity forever.",
+  "primaryCategory": "art",
+  "screenshotUrls": [
+    "https://onchainslate.app/shot1.png",
+    "https://onchainslate.app/shot2.png"
+  ],
+  "imageUrl": "https://onchainslate.app/preview.png",
+  "heroImageUrl": "https://onchainslate.app/hero.png",
+  "splashImageUrl": "https://onchainslate.app/splash.png",
+  "splashBackgroundColor": "#1A1A2E",
+  "tags": ["art", "drawing", "nft", "onchain", "sketch"],
+  "tagline": "Draw it. Mint it. Make it yours.",
+  "buttonTitle": "Open OnchainSlate",
+  "ogTitle": "OnchainSlate – Mint Your Drawings Onchain",
+  "ogDescription": "Turn your sketches into NFTs in seconds.",
+  "ogImageUrl": "https://onchainslate.app/social.png",
+  "castShareUrl": "https://warpcast.com/~/compose?text=Mint%20your%20drawing%20on%20OnchainSlate%20https://onchainslate.app",
+  "homeUrl": "https://onchainslate.app",
+  "webhookUrl": "https://onchainslate.app/api/webhook",
   "accountAssociation": {
     "type": "custody"
-  },
-  "iconUrl": "https://onchain-slate.vercel.app/icon.png",
-  "splashImageUrl": "https://onchain-slate.vercel.app/icon.png",
-  "homeUrl": "https://onchain-slate.vercel.app"
+  }
 }
-
