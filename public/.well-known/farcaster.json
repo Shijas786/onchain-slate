@@ -1,0 +1,9 @@
+{
+  "accountAssociation": {
+    "type": "custody"
+  },
+  "iconUrl": "https://onchain-slate.vercel.app/icon.png",
+  "splashImageUrl": "https://onchain-slate.vercel.app/icon.png",
+  "homeUrl": "https://onchain-slate.vercel.app"
+}
+
