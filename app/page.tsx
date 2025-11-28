@@ -291,13 +291,15 @@ export default function Home() {
               </button>
 
               {!canSignTransaction || !mintRecipient ? (
-                <button
-                  onClick={isInFrame ? handleFarcasterSignIn : connect}
-                  disabled={isMinting}
-                  className="flex-1 md:flex-none px-6 py-2.5 bg-gray-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 min-w-[160px]"
-                >
-                  {isInFrame ? 'Sign in with Farcaster' : 'Connect Wallet'}
-                </button>
+                isInFrame ? (
+                  <button
+                    onClick={handleFarcasterSignIn}
+                    disabled={isMinting}
+                    className="flex-1 md:flex-none px-6 py-2.5 bg-gray-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 min-w-[160px]"
+                  >
+                    Sign in with Farcaster
+                  </button>
+                ) : null
               ) : (
                 <button
                   onClick={handleMint}
