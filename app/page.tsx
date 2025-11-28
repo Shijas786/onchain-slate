@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas';
 import { prepareMint } from '@/lib/api';
 import { drawingNFTAbi, getDrawingNftAddress } from '@/lib/chain';
