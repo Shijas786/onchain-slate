@@ -197,8 +197,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Farcaster Sign In Button (when in frame but not signed in) */}
-              {isInFrame && !isFarcasterSignedIn && (
+              {/* Farcaster Sign In Button (when in frame but not signed in and wallet not connected) */}
+              {isInFrame && !isFarcasterSignedIn && !canSignTransaction && (
                 <button
                   onClick={handleFarcasterSignIn}
                   disabled={isFarcasterSigningIn}

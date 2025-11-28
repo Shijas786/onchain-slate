@@ -14,7 +14,13 @@ export async function uploadImageToIPFS(
 ): Promise<string> {
   const { Readable } = await import('stream');
   
-  const stream = Readable.from(imageBuffer);
+  // Create a readable stream from buffer
+  const stream = new Readable({
+    read() {
+      this.push(imageBuffer);
+      this.push(null); // End the stream
+    }
+  });
   (stream as any).path = filename;
 
   const result = await pinata.pinFileToIPFS(stream, {
