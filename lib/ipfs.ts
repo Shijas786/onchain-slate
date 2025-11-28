@@ -1,17 +1,22 @@
 import PinataClient from '@pinata/sdk';
 
-// Initialize Pinata client only if keys are available
-let pinata: PinataClient | null = null;
+// Get Pinata client instance (lazy initialization)
+function getPinataClient(): PinataClient {
+  const apiKey = process.env.PINATA_API_KEY;
+  const secretKey = process.env.PINATA_SECRET_KEY;
 
-try {
-  if (process.env.PINATA_API_KEY && process.env.PINATA_SECRET_KEY) {
-    pinata = new PinataClient({
-      pinataApiKey: process.env.PINATA_API_KEY,
-      pinataSecretApiKey: process.env.PINATA_SECRET_KEY,
-    });
+  if (!apiKey || !secretKey) {
+    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables in Vercel.');
   }
-} catch (error) {
-  console.error('Failed to initialize Pinata client:', error);
+
+  try {
+    return new PinataClient({
+      pinataApiKey: apiKey,
+      pinataSecretApiKey: secretKey,
+    });
+  } catch (error) {
+    throw new Error(`Failed to initialize Pinata client: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 }
 
 /**
@@ -21,10 +26,7 @@ export async function uploadImageToIPFS(
   imageBuffer: Buffer,
   filename: string
 ): Promise<string> {
-  if (!pinata) {
-    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables.');
-  }
-
+  const pinata = getPinataClient();
   const { Readable } = await import('stream');
   
   // Create a readable stream from buffer
@@ -36,16 +38,25 @@ export async function uploadImageToIPFS(
   });
   (stream as any).path = filename;
 
-  const result = await pinata.pinFileToIPFS(stream, {
-    pinataMetadata: {
-      name: filename,
-    },
-    pinataOptions: {
-      cidVersion: 1,
-    },
-  });
+  try {
+    const result = await pinata.pinFileToIPFS(stream, {
+      pinataMetadata: {
+        name: filename,
+      },
+      pinataOptions: {
+        cidVersion: 1,
+      },
+    });
 
-  return `ipfs://${result.IpfsHash}`;
+    if (!result || !result.IpfsHash) {
+      throw new Error('Pinata upload failed: No IPFS hash returned');
+    }
+
+    return `ipfs://${result.IpfsHash}`;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Failed to upload image to IPFS: ${errorMessage}`);
+  }
 }
 
 /**
@@ -57,20 +68,27 @@ export async function uploadMetadataToIPFS(metadata: {
   image: string;
   attributes?: Array<{ trait_type: string; value: string | number }>;
 }): Promise<string> {
-  if (!pinata) {
-    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables.');
+  const pinata = getPinataClient();
+
+  try {
+    const result = await pinata.pinJSONToIPFS(metadata, {
+      pinataMetadata: {
+        name: `${metadata.name}-metadata.json`,
+      },
+      pinataOptions: {
+        cidVersion: 1,
+      },
+    });
+
+    if (!result || !result.IpfsHash) {
+      throw new Error('Pinata upload failed: No IPFS hash returned');
+    }
+
+    return `ipfs://${result.IpfsHash}`;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Failed to upload metadata to IPFS: ${errorMessage}`);
   }
-
-  const result = await pinata.pinJSONToIPFS(metadata, {
-    pinataMetadata: {
-      name: `${metadata.name}-metadata.json`,
-    },
-    pinataOptions: {
-      cidVersion: 1,
-    },
-  });
-
-  return `ipfs://${result.IpfsHash}`;
 }
 
 /**
