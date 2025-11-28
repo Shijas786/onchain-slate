@@ -16,9 +16,15 @@
   ],
   "imageUrl": "https://onchain-slate.vercel.app/preview.png",
   "heroImageUrl": "https://onchain-slate.vercel.app/hero.png",
-  "splashImageUrl": "https://onchain-slate.vercel.app/splash.png",
+  "splashImageUrl": "https://onchain-slate.vercel.app/splash.gif",
   "splashBackgroundColor": "#1A1A2E",
-  "tags": ["art", "drawing", "nft", "onchain", "sketch"],
+  "tags": [
+    "art",
+    "drawing",
+    "nft",
+    "onchain",
+    "sketch"
+  ],
   "tagline": "Draw it. Mint it.",
   "buttonTitle": "Open Onchain Slate",
   "ogTitle": "OnchainSlate — Mint NFTs",
@@ -41,7 +47,7 @@
     "homeUrl": "https://onchain-slate.vercel.app",
     "imageUrl": "https://onchain-slate.vercel.app/hero.png",
     "buttonTitle": "Open Onchain Slate",
-    "splashImageUrl": "https://onchain-slate.vercel.app/splash.png",
+    "splashImageUrl": "https://onchain-slate.vercel.app/splash.gif",
     "splashBackgroundColor": "#1A1A2E",
     "webhookUrl": "https://onchain-slate.vercel.app/api/webhook"
   },
