@@ -36,7 +36,7 @@ export default function RecentDrawings() {
       }
 
       const latestBlock = await publicClient.getBlockNumber();
-      const fromBlock = latestBlock > 100000n ? latestBlock - 100000n : 0n;
+      const fromBlock = latestBlock > BigInt(100000) ? latestBlock - BigInt(100000) : BigInt(0);
       const event = parseAbiItem(
         'event DrawingMinted(address indexed to, uint256 indexed tokenId, string tokenURI)'
       );
@@ -44,7 +44,7 @@ export default function RecentDrawings() {
       let cursorFrom = fromBlock;
       while (cursorFrom <= latestBlock) {
         const cursorTo =
-          latestBlock - cursorFrom > 50000n ? cursorFrom + 50000n : latestBlock;
+          latestBlock - cursorFrom > BigInt(50000) ? cursorFrom + BigInt(50000) : latestBlock;
         const batch = await publicClient.getLogs({
           address: contractAddress,
           event,
@@ -53,7 +53,7 @@ export default function RecentDrawings() {
         });
         logs.push(...batch);
         if (cursorTo === latestBlock) break;
-        cursorFrom = cursorTo + 1n;
+        cursorFrom = cursorTo + BigInt(1);
       }
 
       // Process logs in reverse order (newest first)
