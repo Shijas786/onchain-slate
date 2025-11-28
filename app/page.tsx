@@ -208,13 +208,13 @@ export default function Home() {
                 </button>
               )}
 
-              {/* Wallet Connect Buttons (when not in frame or as additional option) */}
-              {!isInFrame && (
-                <>
-                  <appkit-network-button />
-                  <appkit-button />
-                </>
-              )}
+            {/* Wallet Connect Buttons (when not in frame or as additional option) */}
+            {!isInFrame && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <appkit-network-button />
+                <appkit-button />
+              </div>
+            )}
             </div>
           </div>
 
