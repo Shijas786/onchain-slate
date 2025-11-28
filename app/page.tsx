@@ -4,7 +4,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas';
 import { prepareMint } from '@/lib/api';
 import { drawingNFTAbi, getDrawingNftAddress } from '@/lib/chain';
-import { Eraser, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { Eraser, Pencil, CheckCircle2, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { useAccount, useConnect, usePublicClient, useWalletClient } from 'wagmi';
 import { useFarcaster } from '@/components/FarcasterProvider';
 import { isAddress } from 'viem';
@@ -30,6 +30,7 @@ export default function Home() {
   const [color, setColor] = useState(COLORS[0]);
   const [brushSize, setBrushSize] = useState(BRUSH_SIZES[1]);
   const [isMinting, setIsMinting] = useState(false);
+  const [isErasing, setIsErasing] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({ type: null, message: '' });
 
   // Get connected wallet address from Wagmi
@@ -245,19 +246,43 @@ export default function Home() {
               ref={canvasRef}
               color={color}
               brushSize={brushSize}
+              isErasing={isErasing}
             />
           </div>
 
           {/* Toolbar */}
           <div className="bg-gray-900 text-white p-4 rounded-2xl shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
 
+            {/* Tool Selection (Pencil/Eraser) */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsErasing(false)}
+                className={`p-2 rounded-lg transition-all ${!isErasing ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                title="Draw"
+              >
+                <Pencil size={20} />
+              </button>
+              <button
+                onClick={() => setIsErasing(true)}
+                className={`p-2 rounded-lg transition-all ${isErasing ? 'bg-pink-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'}`}
+                title="Eraser"
+              >
+                <Eraser size={20} />
+              </button>
+            </div>
+
+            <div className="h-px w-full md:w-px md:h-8 bg-gray-700" />
+
             {/* Colors */}
             <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 px-2">
               {COLORS.map((c) => (
                 <button
                   key={c}
-                  onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all shrink-0 ${color === c ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
+                  onClick={() => {
+                    setColor(c);
+                    setIsErasing(false); // Switch back to draw mode when selecting a color
+                  }}
+                  className={`w-8 h-8 rounded-full border-2 transition-all shrink-0 ${color === c && !isErasing ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-105'
                     }`}
                   style={{ backgroundColor: c }}
                   aria-label={`Select color ${c}`}
@@ -291,10 +316,10 @@ export default function Home() {
             <div className="flex items-center gap-3 w-full md:w-auto justify-end">
               <button
                 onClick={handleClear}
-                className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-colors"
                 title="Clear Canvas"
               >
-                <Eraser size={20} />
+                <Trash2 size={20} />
               </button>
 
               {!canSignTransaction || !mintRecipient ? (

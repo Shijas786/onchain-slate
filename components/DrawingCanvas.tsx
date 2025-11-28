@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } f
 interface DrawingCanvasProps {
   color: string;
   brushSize: number;
+  isErasing?: boolean;
 }
 
 export interface DrawingCanvasRef {
@@ -13,7 +14,7 @@ export interface DrawingCanvasRef {
 }
 
 const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
-  ({ color, brushSize }, ref) => {
+  ({ color, brushSize, isErasing = false }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [context, setContext] = useState<CanvasRenderingContext2D | null>(null);
@@ -65,10 +66,12 @@ const DrawingCanvas = forwardRef<DrawingCanvasRef, DrawingCanvasProps>(
     // Update context properties when props change
     useEffect(() => {
       if (context) {
-        context.strokeStyle = color;
-        context.lineWidth = brushSize;
+        // Use white color when erasing, otherwise use selected color
+        context.strokeStyle = isErasing ? '#FFFFFF' : color;
+        // Make eraser slightly larger for better erasing experience
+        context.lineWidth = isErasing ? brushSize * 2 : brushSize;
       }
-    }, [context, color, brushSize]);
+    }, [context, color, brushSize, isErasing]);
 
     useImperativeHandle(ref, () => ({
       getImage: () => {
