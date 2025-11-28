@@ -5,7 +5,7 @@ import DrawingCanvas, { DrawingCanvasRef } from '@/components/DrawingCanvas';
 import { prepareMint } from '@/lib/api';
 import { drawingNFTAbi, getDrawingNftAddress } from '@/lib/chain';
 import { Eraser, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, useConnect, usePublicClient, useWalletClient } from 'wagmi';
 import { useFarcaster } from '@/components/FarcasterProvider';
 import { isAddress } from 'viem';
 import Image from 'next/image';
@@ -34,6 +34,7 @@ export default function Home() {
 
   // Get connected wallet address from Wagmi
   const { address: wagmiAddress, isConnected: isWagmiConnected } = useAccount();
+  const { connect, connectors, status: connectStatus } = useConnect();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
@@ -144,6 +145,16 @@ export default function Home() {
       setStatus({ type: 'error', message: farcasterError });
       setTimeout(() => setStatus({ type: null, message: '' }), 3000);
     }
+  useEffect(() => {
+    if (!isInFrame) return;
+    if (isWagmiConnected || connectStatus === 'pending') return;
+    const farcasterConnector = connectors.find((c) => c.id === 'farcaster-miniapp');
+    if (farcasterConnector) {
+      connect({ connector: farcasterConnector }).catch(() => {
+        /* ignore auto-connect failures */
+      });
+    }
+  }, [isInFrame, isWagmiConnected, connectors, connect, connectStatus]);
   };
 
   return (
