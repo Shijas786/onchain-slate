@@ -1,66 +1,67 @@
-import PinataClient from '@pinata/sdk';
-
-// Get Pinata client instance (lazy initialization)
-function getPinataClient(): PinataClient {
-  const apiKey = process.env.PINATA_API_KEY;
-  const secretKey = process.env.PINATA_SECRET_KEY;
-
-  if (!apiKey || !secretKey) {
-    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables in Vercel.');
-  }
-
-  try {
-    return new PinataClient({
-      pinataApiKey: apiKey,
-      pinataSecretApiKey: secretKey,
-    });
-  } catch (error) {
-    throw new Error(`Failed to initialize Pinata client: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-}
+/**
+ * IPFS upload using Lighthouse Storage
+ * 
+ * Setup:
+ * Add LIGHTHOUSE_API_KEY to your .env.local and Vercel environment variables
+ */
 
 /**
- * Upload an image buffer to IPFS via Pinata
+ * Upload an image buffer to IPFS via Lighthouse
  */
 export async function uploadImageToIPFS(
   imageBuffer: Buffer,
   filename: string
 ): Promise<string> {
-  const pinata = getPinataClient();
-  const { Readable } = await import('stream');
-  
-  // Create a readable stream from buffer
-  const stream = new Readable({
-    read() {
-      this.push(imageBuffer);
-      this.push(null); // End the stream
-    }
-  });
-  (stream as any).path = filename;
+  const apiKey = process.env.LIGHTHOUSE_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      'LIGHTHOUSE_API_KEY not configured. ' +
+      'Please set it in .env.local or Vercel environment variables.'
+    );
+  }
 
   try {
-    const result = await pinata.pinFileToIPFS(stream, {
-      pinataMetadata: {
-        name: filename,
+    // Use native Node.js approach that works in Next.js/Vercel
+    const boundary = '----FormBoundary' + Math.random().toString(36).substring(2);
+    
+    const body = Buffer.concat([
+      Buffer.from(`--${boundary}\r\n`),
+      Buffer.from(`Content-Disposition: form-data; name="file"; filename="${filename}"\r\n`),
+      Buffer.from(`Content-Type: image/png\r\n\r\n`),
+      imageBuffer,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+
+    const response = await fetch('https://upload.lighthouse.storage/api/v0/add', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
       },
-      pinataOptions: {
-        cidVersion: 1,
-      },
+      body,
     });
 
-    if (!result || !result.IpfsHash) {
-      throw new Error('Pinata upload failed: No IPFS hash returned');
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Upload failed: ${response.status} - ${errorText}`);
     }
 
-    return `ipfs://${result.IpfsHash}`;
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to upload image to IPFS: ${errorMessage}`);
+    const result = await response.json();
+    
+    if (result.Hash) {
+      return `ipfs://${result.Hash}`;
+    }
+    
+    throw new Error('No Hash in response');
+  } catch (error: any) {
+    console.error('Lighthouse upload error:', error);
+    throw new Error(`Failed to upload image to IPFS: ${error?.message || 'Unknown error'}`);
   }
 }
 
 /**
- * Upload NFT metadata JSON to IPFS via Pinata
+ * Upload NFT metadata JSON to IPFS via Lighthouse
  */
 export async function uploadMetadataToIPFS(metadata: {
   name: string;
@@ -68,26 +69,55 @@ export async function uploadMetadataToIPFS(metadata: {
   image: string;
   attributes?: Array<{ trait_type: string; value: string | number }>;
 }): Promise<string> {
-  const pinata = getPinataClient();
+  const apiKey = process.env.LIGHTHOUSE_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      'LIGHTHOUSE_API_KEY not configured. ' +
+      'Please set it in .env.local or Vercel environment variables.'
+    );
+  }
 
   try {
-    const result = await pinata.pinJSONToIPFS(metadata, {
-      pinataMetadata: {
-        name: `${metadata.name}-metadata.json`,
+    const metadataJson = JSON.stringify(metadata, null, 2);
+    const metadataBuffer = Buffer.from(metadataJson, 'utf-8');
+    const filename = `${metadata.name.replace(/[^a-zA-Z0-9]/g, '-')}-metadata.json`;
+    
+    // Use native Node.js approach
+    const boundary = '----FormBoundary' + Math.random().toString(36).substring(2);
+    
+    const body = Buffer.concat([
+      Buffer.from(`--${boundary}\r\n`),
+      Buffer.from(`Content-Disposition: form-data; name="file"; filename="${filename}"\r\n`),
+      Buffer.from(`Content-Type: application/json\r\n\r\n`),
+      metadataBuffer,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+
+    const response = await fetch('https://upload.lighthouse.storage/api/v0/add', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
       },
-      pinataOptions: {
-        cidVersion: 1,
-      },
+      body,
     });
 
-    if (!result || !result.IpfsHash) {
-      throw new Error('Pinata upload failed: No IPFS hash returned');
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Upload failed: ${response.status} - ${errorText}`);
     }
 
-    return `ipfs://${result.IpfsHash}`;
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to upload metadata to IPFS: ${errorMessage}`);
+    const result = await response.json();
+    
+    if (result.Hash) {
+      return `ipfs://${result.Hash}`;
+    }
+    
+    throw new Error('No Hash in response');
+  } catch (error: any) {
+    console.error('Lighthouse metadata upload error:', error);
+    throw new Error(`Failed to upload metadata to IPFS: ${error?.message || 'Unknown error'}`);
   }
 }
 
@@ -97,8 +127,7 @@ export async function uploadMetadataToIPFS(metadata: {
 export function ipfsToHttp(ipfsUri: string): string {
   if (ipfsUri.startsWith('ipfs://')) {
     const cid = ipfsUri.replace('ipfs://', '');
-    return `https://gateway.pinata.cloud/ipfs/${cid}`;
+    return `https://gateway.lighthouse.storage/ipfs/${cid}`;
   }
   return ipfsUri;
 }
-
