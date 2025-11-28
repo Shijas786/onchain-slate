@@ -145,6 +145,8 @@ export default function Home() {
       setStatus({ type: 'error', message: farcasterError });
       setTimeout(() => setStatus({ type: null, message: '' }), 3000);
     }
+  };
+
   useEffect(() => {
     if (!isInFrame) return;
     if (isWagmiConnected || connectStatus === 'pending') return;
@@ -154,8 +156,7 @@ export default function Home() {
         /* ignore auto-connect failures */
       });
     }
-  }, [isInFrame, isWagmiConnected, connectors, connect, connectStatus]);
-  };
+  }, [isInFrame, isWagmiConnected, connectStatus, connectors, connect]);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col p-4 font-sans">
