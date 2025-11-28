@@ -287,27 +287,33 @@ export default function Home() {
                 <Eraser size={20} />
               </button>
 
-              <button
-                onClick={handleMint}
-                disabled={isMinting || !canSignTransaction || !mintRecipient}
-                className={`flex-1 md:flex-none px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px] shadow-lg shadow-blue-500/25`}
-              >
-                {isMinting ? (
-                  <>
-                    <Loader2 size={18} className="animate-spin" />
-                    Minting...
-                  </>
-                ) : !canSignTransaction ? (
-                  <>Connect Wallet</>
-                ) : !mintRecipient ? (
-                  <>Set Recipient</>
-                ) : (
-                  <>
-                    <Sparkles size={18} />
-                    Mint as NFT
-                  </>
-                )}
-              </button>
+              {!canSignTransaction || !mintRecipient ? (
+                <button
+                  onClick={isInFrame ? handleFarcasterSignIn : connect}
+                  disabled={isMinting}
+                  className="flex-1 md:flex-none px-6 py-2.5 bg-gray-700 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 min-w-[160px]"
+                >
+                  {isInFrame ? 'Sign in with Farcaster' : 'Connect Wallet'}
+                </button>
+              ) : (
+                <button
+                  onClick={handleMint}
+                  disabled={isMinting}
+                  className={`flex-1 md:flex-none px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2 min-w-[160px] shadow-lg shadow-blue-500/25`}
+                >
+                  {isMinting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Minting...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={18} />
+                      Mint as NFT
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           </div>
 
