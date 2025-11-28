@@ -152,9 +152,11 @@ export default function Home() {
     if (isWagmiConnected || connectStatus === 'pending') return;
     const farcasterConnector = connectors.find((c) => c.id === 'farcaster-miniapp');
     if (farcasterConnector) {
-      connect({ connector: farcasterConnector }).catch(() => {
+      try {
+        connect({ connector: farcasterConnector });
+      } catch {
         /* ignore auto-connect failures */
-      });
+      }
     }
   }, [isInFrame, isWagmiConnected, connectStatus, connectors, connect]);
 
