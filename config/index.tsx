@@ -12,8 +12,8 @@ if (!projectId) {
   throw new Error('NEXT_PUBLIC_PROJECT_ID is not defined. Please set it in .env.local')
 }
 
-// Define supported networks - Base Sepolia for testing, Base mainnet for production
-export const networks: [Chain, ...Chain[]] = [baseSepolia, base]
+// Define supported networks - Base mainnet (default), Base Sepolia for testing
+export const networks: [Chain, ...Chain[]] = [base, baseSepolia]
 
 // Create the Wagmi adapter instance
 export const wagmiAdapter = new WagmiAdapter({

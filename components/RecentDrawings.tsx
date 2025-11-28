@@ -40,7 +40,7 @@ export default function RecentDrawings() {
       const event = parseAbiItem(
         'event DrawingMinted(address indexed to, uint256 indexed tokenId, string tokenURI)'
       );
-      const logs: typeof event['returns'][] = [];
+      const logs: any[] = [];
       let cursorFrom = fromBlock;
       while (cursorFrom <= latestBlock) {
         const cursorTo =

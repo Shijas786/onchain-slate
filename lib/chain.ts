@@ -1,8 +1,8 @@
 import { baseSepolia, base } from 'viem/chains';
 
-// Select chain based on environment
-const isMainnet = process.env.NEXT_PUBLIC_CHAIN === 'mainnet';
-export const chain = isMainnet ? base : baseSepolia;
+// Select chain based on environment (default to mainnet)
+const isSepolia = process.env.NEXT_PUBLIC_CHAIN === 'sepolia';
+export const chain = isSepolia ? baseSepolia : base;
 
 // Public contract address (used on both client & server)
 export const getDrawingNftAddress = (): `0x${string}` => {

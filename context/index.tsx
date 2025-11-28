@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider, cookieToInitialState, createConfig, http, type Config } from 'wagmi'
 import { createAppKit } from '@reown/appkit/react'
 import { config as appKitWagmiConfig, networks, projectId, wagmiAdapter } from '@/config'
-import { baseSepolia } from '@reown/appkit/networks'
+import { base as appKitBase, baseSepolia } from '@reown/appkit/networks'
 import { FarcasterProvider } from '@/components/FarcasterProvider'
 import { base as wagmiBase, baseSepolia as wagmiBaseSepolia } from 'wagmi/chains'
 import { injected } from 'wagmi/connectors'
@@ -28,7 +28,7 @@ if (projectId) {
     adapters: [wagmiAdapter],
     projectId: projectId!,
     networks: networks,
-    defaultNetwork: baseSepolia,
+    defaultNetwork: appKitBase,
     metadata,
     features: { 
       analytics: true,
@@ -57,10 +57,10 @@ const farcasterConnector = injected({
 })
 
 const miniAppWagmiConfig = createConfig({
-  chains: [wagmiBaseSepolia, wagmiBase],
+  chains: [wagmiBase, wagmiBaseSepolia],
   transports: {
-    [wagmiBaseSepolia.id]: http(),
     [wagmiBase.id]: http(),
+    [wagmiBaseSepolia.id]: http(),
   },
   connectors: [farcasterConnector],
   ssr: true,
