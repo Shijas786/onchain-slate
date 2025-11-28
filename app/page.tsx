@@ -105,6 +105,13 @@ export default function Home() {
     try {
       const preparation = await prepareMint(image);
 
+      if (!preparation || !preparation.metadataIpfsUri) {
+        setStatus({ type: 'error', message: 'Failed to prepare NFT metadata. Please try again.' });
+        setIsMinting(false);
+        setTimeout(() => setStatus({ type: null, message: '' }), 5000);
+        return;
+      }
+
       const txHash = await walletClient.writeContract({
         address: drawingNftAddress,
         abi: drawingNFTAbi,

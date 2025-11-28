@@ -1,9 +1,18 @@
 import PinataClient from '@pinata/sdk';
 
-const pinata = new PinataClient({
-  pinataApiKey: process.env.PINATA_API_KEY!,
-  pinataSecretApiKey: process.env.PINATA_SECRET_KEY!,
-});
+// Initialize Pinata client only if keys are available
+let pinata: PinataClient | null = null;
+
+try {
+  if (process.env.PINATA_API_KEY && process.env.PINATA_SECRET_KEY) {
+    pinata = new PinataClient({
+      pinataApiKey: process.env.PINATA_API_KEY,
+      pinataSecretApiKey: process.env.PINATA_SECRET_KEY,
+    });
+  }
+} catch (error) {
+  console.error('Failed to initialize Pinata client:', error);
+}
 
 /**
  * Upload an image buffer to IPFS via Pinata
@@ -12,6 +21,10 @@ export async function uploadImageToIPFS(
   imageBuffer: Buffer,
   filename: string
 ): Promise<string> {
+  if (!pinata) {
+    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables.');
+  }
+
   const { Readable } = await import('stream');
   
   // Create a readable stream from buffer
@@ -44,6 +57,10 @@ export async function uploadMetadataToIPFS(metadata: {
   image: string;
   attributes?: Array<{ trait_type: string; value: string | number }>;
 }): Promise<string> {
+  if (!pinata) {
+    throw new Error('Pinata API keys not configured. Please set PINATA_API_KEY and PINATA_SECRET_KEY environment variables.');
+  }
+
   const result = await pinata.pinJSONToIPFS(metadata, {
     pinataMetadata: {
       name: `${metadata.name}-metadata.json`,
