@@ -35,13 +35,13 @@ export default function RecentDrawings() {
         return;
       }
 
-      // Get the current block number to limit the search range if needed
-      // For now, we'll fetch all events and take the last 10, 
-      // but in production you might want to limit the block range.
+      const latestBlock = await publicClient.getBlockNumber();
+      const fromBlock = latestBlock > 100000n ? latestBlock - 100000n : 0n;
       const logs = await publicClient.getLogs({
         address: contractAddress,
         event: parseAbiItem('event DrawingMinted(address indexed to, uint256 indexed tokenId, string tokenURI)'),
-        fromBlock: 'earliest',
+        fromBlock,
+        toBlock: latestBlock,
       });
 
       // Process logs in reverse order (newest first)
