@@ -103,6 +103,12 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
     initSDK();
   }, []);
 
+  const generateNonce = () => {
+    const randomPart = Math.random().toString(36).slice(2, 10);
+    const timePart = Date.now().toString(36);
+    return `${randomPart}${timePart}`;
+  };
+
   // Sign In with Farcaster
   const signIn = useCallback(async () => {
     if (!isInFrame) {
@@ -114,8 +120,8 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
     setError(null);
 
     try {
-      // Generate a random nonce
-      const nonce = crypto.randomUUID();
+      // Generate a random nonce (alphanumeric, >= 8 chars)
+      const nonce = generateNonce();
       
       // Request sign in
       const result = await sdk.actions.signIn({
