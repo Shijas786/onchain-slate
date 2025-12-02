@@ -42,6 +42,12 @@ interface FarcasterProviderProps {
   children: ReactNode;
 }
 
+declare global {
+  interface Window {
+    appkitReady?: boolean;
+  }
+}
+
 export function FarcasterProvider({ children }: FarcasterProviderProps) {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [isInFrame, setIsInFrame] = useState(false);
@@ -74,18 +80,34 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
           }
         }
         
-        // Signal to the frame that we're ready
-        sdk.actions.ready();
+        if (typeof window !== 'undefined') {
+          window.appkitReady = true;
+        }
+        await sdk.actions.ready();
         setIsSDKLoaded(true);
       } catch (err) {
         console.log('Not running in a Farcaster frame');
         setIsSDKLoaded(true);
         setIsInFrame(false);
+        try {
+          if (typeof window !== 'undefined') {
+            window.appkitReady = true;
+          }
+          await sdk.actions.ready();
+        } catch {
+          // ignore if not available
+        }
       }
     };
 
     initSDK();
   }, []);
+
+  const generateNonce = () => {
+    const randomPart = Math.random().toString(36).slice(2, 10);
+    const timePart = Date.now().toString(36);
+    return `${randomPart}${timePart}`;
+  };
 
   // Sign In with Farcaster
   const signIn = useCallback(async () => {
@@ -98,8 +120,8 @@ export function FarcasterProvider({ children }: FarcasterProviderProps) {
     setError(null);
 
     try {
-      // Generate a random nonce
-      const nonce = crypto.randomUUID();
+      // Generate a random nonce (alphanumeric, >= 8 chars)
+      const nonce = generateNonce();
       
       // Request sign in
       const result = await sdk.actions.signIn({

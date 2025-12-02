@@ -1,0 +1,58 @@
+{
+  "accountAssociation": {
+    "type": "custody",
+    "header": "eyJmaWQiOjI1OTkxMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDlmZjdjNTNhNDU3NzcxOGQwOUIxYkZiYTVlRkU2MzFCOTlmY2FmZmMifQ",
+    "payload": "eyJkb21haW4iOiJvbmNoYWluLXNsYXRlLnZlcmNlbC5hcHAifQ",
+    "signature": "zjTypCH0hV3CmFLhw73Px4WIZDHVQvS2s8VB1zoo1ipOmOx0MBTuFzPjkV77eS/cLC18PZrq7gLxgpzGYuptNxs="
+  },
+  "name": "Onchain Slate",
+  "iconUrl": "https://onchain-slate.vercel.app/icon.png",
+  "subtitle": "Draw and Mint Instantly",
+  "description": "Onchain Slate lets you sketch something, mint it, and own it forever on Base.",
+  "primaryCategory": "art",
+  "screenshotUrls": [
+    "https://onchain-slate.vercel.app/shot1.png",
+    "https://onchain-slate.vercel.app/shot2.png"
+  ],
+  "imageUrl": "https://onchain-slate.vercel.app/preview.png",
+  "heroImageUrl": "https://onchain-slate.vercel.app/hero.png",
+  "splashImageUrl": "https://onchain-slate.vercel.app/splash.gif",
+  "splashBackgroundColor": "#1A1A2E",
+  "tags": [
+    "art",
+    "drawing",
+    "nft",
+    "onchain",
+    "sketch"
+  ],
+  "tagline": "Draw it. Mint it.",
+  "buttonTitle": "Open Onchain Slate",
+  "ogTitle": "OnchainSlate — Mint NFTs",
+  "ogDescription": "Turn your sketches into NFTs in seconds.",
+  "ogImageUrl": "https://onchain-slate.vercel.app/social.png",
+  "castShareUrl": "https://warpcast.com/~/compose?text=Mint%20your%20drawing%20on%20OnchainSlate%20https://onchain-slate.vercel.app",
+  "homeUrl": "https://onchain-slate.vercel.app",
+  "webhookUrl": "https://onchain-slate.vercel.app/api/webhook",
+  "url": "https://onchain-slate.vercel.app",
+  "icon": "https://onchain-slate.vercel.app/icon.png",
+  "category": "art",
+  "screenshots": [
+    "https://onchain-slate.vercel.app/shot1.png",
+    "https://onchain-slate.vercel.app/shot2.png"
+  ],
+  "frame": {
+    "version": "1",
+    "name": "Onchain Slate",
+    "iconUrl": "https://onchain-slate.vercel.app/icon.png",
+    "homeUrl": "https://onchain-slate.vercel.app",
+    "imageUrl": "https://onchain-slate.vercel.app/hero.png",
+    "buttonTitle": "Open Onchain Slate",
+    "splashImageUrl": "https://onchain-slate.vercel.app/splash.gif",
+    "splashBackgroundColor": "#1A1A2E",
+    "webhookUrl": "https://onchain-slate.vercel.app/api/webhook"
+  },
+  "creator": {
+    "name": "Onchain Slate",
+    "url": "https://onchain-slate.vercel.app"
+  }
+}

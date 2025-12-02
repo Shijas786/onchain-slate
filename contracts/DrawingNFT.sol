@@ -1,82 +1,97 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-
 /**
- * @title DrawingNFT
- * @dev ERC721 NFT contract for minting user drawings as NFTs
- * @notice Only the owner (backend wallet) can mint to prevent abuse
- * 
- * Basescan Verification:
- * npx hardhat verify --network base <CONTRACT_ADDRESS>
- * 
- * For Base Sepolia:
- * npx hardhat verify --network baseSepolia <CONTRACT_ADDRESS>
+ * @title SimpleDrawingNFT
+ * @notice Import-free ERC721-style NFT contract for minting drawings.
+ * @dev Public mint. Unique bytecode ensured via custom salt.
  */
-contract DrawingNFT is ERC721, ERC721URIStorage, Ownable {
+contract SimpleDrawingNFT {
+    // Unique salt to avoid bytecode collisions
+    uint256 private constant _SALT = 883727199;
+
+    string public name;
+    string public symbol;
+
+    address public owner;
     uint256 private _nextTokenId;
 
-    /// @notice Emitted when a new drawing NFT is minted
-    event DrawingMinted(address indexed to, uint256 indexed tokenId, string tokenURI);
+    mapping(uint256 => address) private _owners;
+    mapping(address => uint256) private _balances;
+    mapping(uint256 => string) private _tokenURIs;
 
-    constructor() ERC721("DrawingNFT", "DRAW") Ownable(msg.sender) {
-        _nextTokenId = 1;
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event DrawingMinted(address indexed to, uint256 indexed tokenId, string tokenURI);
+    event Salt(uint256 salt);
+
+    modifier exists(uint256 tokenId) {
+        require(_owners[tokenId] != address(0), "Token does not exist");
+        _;
     }
 
-    /**
-     * @notice Mint a new drawing NFT
-     * @dev Only callable by the contract owner (backend wallet)
-     * @param to The address to mint the NFT to
-     * @param uri The IPFS URI containing the NFT metadata
-     * @return tokenId The ID of the newly minted token
-     */
-    function mint(address to, string memory uri) public onlyOwner returns (uint256) {
+    constructor() {
+        name = "SimpleDrawingNFT";
+        symbol = "SDRAW";
+        owner = msg.sender;
+        _nextTokenId = 1;
+
+        // Guarantee unique bytecode for scan verification
+        emit Salt(_SALT);
+    }
+
+    // --- Core ERC721 functionality ---
+
+    function balanceOf(address user) public view returns (uint256) {
+        require(user != address(0), "Zero address");
+        return _balances[user];
+    }
+
+    function ownerOf(uint256 tokenId) public view exists(tokenId) returns (address) {
+        return _owners[tokenId];
+    }
+
+    function tokenURI(uint256 tokenId) public view exists(tokenId) returns (string memory) {
+        return _tokenURIs[tokenId];
+    }
+
+    // --- Minting (PUBLIC) ---
+
+    function mint(address to, string memory uri) external returns (uint256) {
+        require(to != address(0), "Invalid address");
+
         uint256 tokenId = _nextTokenId++;
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-        
+        _owners[tokenId] = to;
+        _balances[to] += 1;
+        _tokenURIs[tokenId] = uri;
+
+        emit Transfer(address(0), to, tokenId);
         emit DrawingMinted(to, tokenId, uri);
-        
+
         return tokenId;
     }
 
-    /**
-     * @notice Get the current token ID counter
-     * @return The next token ID that will be minted
-     */
+    // --- Transfer (basic ERC721-style) ---
+
+    function transferFrom(address from, address to, uint256 tokenId) external exists(tokenId) {
+        require(msg.sender == from, "Only owner can transfer");
+        require(_owners[tokenId] == from, "Not token owner");
+        require(to != address(0), "Zero address");
+
+        _balances[from] -= 1;
+        _balances[to] += 1;
+        _owners[tokenId] = to;
+
+        emit Transfer(from, to, tokenId);
+    }
+
+    // --- Supply helpers ---
+
     function getCurrentTokenId() public view returns (uint256) {
         return _nextTokenId;
     }
 
-    /**
-     * @notice Get the total number of tokens minted
-     * @return The total supply of tokens
-     */
     function totalSupply() public view returns (uint256) {
         return _nextTokenId - 1;
-    }
-
-    // Required overrides for ERC721URIStorage
-
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }
 

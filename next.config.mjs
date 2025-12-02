@@ -17,8 +17,26 @@ const nextConfig = {
       '@coinbase/wallet-sdk': false,
       '@metamask/sdk': false,
       '@walletconnect/ethereum-provider': false,
+      '@base-org/account': false,
     };
     return config;
+  },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://warpcast.com https://*.warpcast.com https://farcaster.xyz https://*.farcaster.xyz;",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "ALLOWALL",
+          },
+        ],
+      },
+    ];
   },
 };
 

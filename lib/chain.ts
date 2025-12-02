@@ -1,65 +1,15 @@
-import { createPublicClient, createWalletClient, http } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 import { baseSepolia, base } from 'viem/chains';
 
-// Select chain based on environment
-const isMainnet = process.env.NEXT_PUBLIC_CHAIN === 'mainnet';
-export const chain = isMainnet ? base : baseSepolia;
+// Select chain based on environment (default to mainnet)
+const isSepolia = process.env.NEXT_PUBLIC_CHAIN === 'sepolia';
+export const chain = isSepolia ? baseSepolia : base;
 
-// RPC URL
-const rpcUrl = isMainnet
-  ? process.env.BASE_MAINNET_RPC_URL || 'https://mainnet.base.org'
-  : process.env.BASE_SEPOLIA_RPC_URL || 'https://sepolia.base.org';
+// Public contract address (used on both client & server)
+export const getDrawingNftAddress = (): `0x${string}` => {
+  const address = process.env.NEXT_PUBLIC_DRAWING_NFT_CONTRACT_ADDRESS;
 
-// Public client for reading from the blockchain
-export const publicClient = createPublicClient({
-  chain,
-  transport: http(rpcUrl),
-});
-
-// Create wallet client with private key (server-side only)
-export const getWalletClient = () => {
-  const privateKey = process.env.PRIVATE_KEY;
-  
-  if (!privateKey) {
-    throw new Error('PRIVATE_KEY environment variable is not set');
-  }
-
-  // Ensure private key has 0x prefix
-  const formattedKey = privateKey.startsWith('0x') 
-    ? privateKey as `0x${string}` 
-    : `0x${privateKey}` as `0x${string}`;
-
-  const account = privateKeyToAccount(formattedKey);
-
-  return createWalletClient({
-    account,
-    chain,
-    transport: http(rpcUrl),
-  });
-};
-
-// Get the signer account
-export const getSignerAccount = () => {
-  const privateKey = process.env.PRIVATE_KEY;
-  
-  if (!privateKey) {
-    throw new Error('PRIVATE_KEY environment variable is not set');
-  }
-
-  const formattedKey = privateKey.startsWith('0x') 
-    ? privateKey as `0x${string}` 
-    : `0x${privateKey}` as `0x${string}`;
-
-  return privateKeyToAccount(formattedKey);
-};
-
-// Contract address
-export const getContractAddress = (): `0x${string}` => {
-  const address = process.env.DRAWING_NFT_CONTRACT_ADDRESS;
-  
   if (!address) {
-    throw new Error('DRAWING_NFT_CONTRACT_ADDRESS environment variable is not set');
+    throw new Error('NEXT_PUBLIC_DRAWING_NFT_CONTRACT_ADDRESS is not set');
   }
 
   return address as `0x${string}`;

@@ -5,10 +5,10 @@ A web-based Drawing → NFT minting app built with Next.js and deployed on Base.
 ## Features
 
 - **Drawing Canvas**: Responsive HTML5 canvas with brush size and color selection
-- **NFT Minting**: Upload drawings to IPFS and mint as ERC721 NFTs on Base
+- **NFT Minting**: Upload drawings to IPFS and mint as ERC721 NFTs on Base directly from your wallet
 - **Mobile-Friendly**: Touch support for drawing on mobile devices
-- **Farcaster Integration**: Sign in with Farcaster when embedded in a Farcaster frame
-- **Wallet Connect**: Connect with any wallet via Reown (WalletConnect)
+- **Farcaster Mini App**: Auto-detects Warpcast Mini App environment and uses the built-in wallet so users pay gas themselves
+- **Wallet Connect**: Connect with any wallet via Reown (WalletConnect) when not in a Farcaster frame
 - **Dual Authentication**: Seamlessly switch between Farcaster and traditional wallet connections
 
 ## Tech Stack
@@ -17,7 +17,7 @@ A web-based Drawing → NFT minting app built with Next.js and deployed on Base.
 - **Smart Contract**: Solidity, OpenZeppelin, Hardhat
 - **Blockchain**: Base (Sepolia testnet / Mainnet)
 - **Storage**: IPFS via Pinata
-- **Wallet**: viem for server-side signing, Reown (WalletConnect) for client connections
+- **Wallet**: Wagmi + Reown AppKit (WalletConnect)
 - **Authentication**: Farcaster Mini App SDK, Reown AppKit
 
 ## Getting Started
@@ -41,21 +41,27 @@ npm install
 Create a `.env.local` file:
 
 ```env
-# Blockchain
-PRIVATE_KEY=your_wallet_private_key
+# WalletConnect / AppKit
+NEXT_PUBLIC_PROJECT_ID=your_walletconnect_project_id
+
+# Chain selection
+NEXT_PUBLIC_CHAIN=sepolia   # or 'mainnet'
+
+# Drawing NFT contract (used in the client bundle for wallet minting)
+NEXT_PUBLIC_DRAWING_NFT_CONTRACT_ADDRESS=deployed_contract_address
+
+# Optional RPC overrides
 BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
 BASE_MAINNET_RPC_URL=https://mainnet.base.org
-DRAWING_NFT_CONTRACT_ADDRESS=deployed_contract_address
+
+# Hardhat-only (not used by Next.js anymore, but needed when deploying)
+PRIVATE_KEY=your_wallet_private_key
 
 # IPFS (Pinata)
 PINATA_API_KEY=your_pinata_api_key
 PINATA_SECRET_KEY=your_pinata_secret_key
 
-# Wallet Connect (Reown)
-NEXT_PUBLIC_PROJECT_ID=your_reown_project_id
-
 # Optional
-NEXT_PUBLIC_CHAIN=sepolia  # or 'mainnet'
 BASESCAN_API_KEY=your_basescan_api_key
 ```
 
@@ -88,6 +94,12 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to start drawing!
 
+### Mint Flow
+
+1. The `/api/mint` route only uploads the drawing + metadata to IPFS (no blockchain keys on the server).
+2. The browser wallet signs and submits the `mint` transaction using Wagmi/AppKit, paying its own gas.
+3. When running inside the Farcaster Mini App, Wagmi switches to the Farcaster connector and auto-connects the custody wallet, so the same flow works without an extra WalletConnect modal.
+
 ## Project Structure
 
 ```
@@ -97,7 +109,7 @@ Open [http://localhost:3000](http://localhost:3000) to start drawing!
 │   │   │   └── farcaster/
 │   │   │       └── route.ts      # Farcaster auth verification
 │   │   └── mint/
-│   │       └── route.ts          # Mint API endpoint
+│   │       └── route.ts          # Upload drawing + metadata to IPFS
 │   ├── layout.tsx                # Root layout with providers
 │   ├── page.tsx                  # Main drawing page
 │   └── globals.css               # Global styles
