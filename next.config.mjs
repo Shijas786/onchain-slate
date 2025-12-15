@@ -14,13 +14,13 @@ const nextConfig = {
       '@gemini-wallet/core': false,
       '@solana/kit': false,
       'axios': false,
-      '@coinbase/wallet-sdk': false,
       '@metamask/sdk': false,
       '@walletconnect/ethereum-provider': false,
       '@base-org/account': false,
     };
     return config;
   },
+  transpilePackages: ['@coinbase/onchainkit'],
   async headers() {
     return [
       {

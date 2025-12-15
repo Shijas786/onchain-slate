@@ -12,6 +12,7 @@ import { base as wagmiBase, baseSepolia as wagmiBaseSepolia } from 'wagmi/chains
 import { injected } from 'wagmi/connectors'
 import sdk from '@farcaster/miniapp-sdk'
 import type { EIP1193Provider } from 'viem'
+import { OnchainKitProvider } from '@coinbase/onchainkit'
 
 const queryClient = new QueryClient()
 
@@ -30,7 +31,7 @@ if (projectId) {
     networks: networks,
     defaultNetwork: appKitBase,
     metadata,
-    features: { 
+    features: {
       analytics: true,
       email: true,
       socials: ['google', 'x', 'github', 'discord', 'farcaster'],
@@ -94,7 +95,7 @@ export default function ContextProvider({
         const provider = await sdk.wallet.getEthereumProvider()
         cachedFarcasterProvider = provider as EIP1193Provider
         if (typeof window !== 'undefined') {
-          ;(window as any).farcasterEthereum = provider
+          ; (window as any).farcasterEthereum = provider
         }
         if (cancelled) return
         setActiveConfig(miniAppWagmiConfig as Config)
@@ -116,9 +117,11 @@ export default function ContextProvider({
   return (
     <WagmiProvider config={activeConfig} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
-        <FarcasterProvider>
-          {children}
-        </FarcasterProvider>
+        <OnchainKitProvider chain={wagmiBase}>
+          <FarcasterProvider>
+            {children}
+          </FarcasterProvider>
+        </OnchainKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )

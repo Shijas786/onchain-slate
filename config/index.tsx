@@ -17,7 +17,7 @@ export const networks: [Chain, ...Chain[]] = [base, baseSepolia]
 
 // Create the Wagmi adapter instance
 export const wagmiAdapter = new WagmiAdapter({
-  storage: createStorage({ storage: cookieStorage }),
+  storage: createStorage({ storage: cookieStorage }) as any,
   ssr: true,
   projectId,
   networks,
