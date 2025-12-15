@@ -7,7 +7,8 @@ import { drawingNFTAbi, getDrawingNftAddress } from '@/lib/chain';
 import { Eraser, Pencil, CheckCircle2, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { useAccount, useConnect, usePublicClient, useWalletClient } from 'wagmi';
 import { useFarcaster } from '@/components/FarcasterProvider';
-import { isAddress } from 'viem';
+import { isAddress, encodeFunctionData } from 'viem';
+import { Attribution } from 'ox/erc8021';
 import Image from 'next/image';
 import RecentDrawings from '@/components/RecentDrawings';
 import { Logo } from '@/components/Logo';
@@ -113,11 +114,25 @@ export default function Home() {
         return;
       }
 
-      const txHash = await walletClient.writeContract({
-        address: drawingNftAddress,
+      // Build transaction data with builder code attribution
+      const builderCode = "bc_bw2lexpk";
+      const dataSuffix = Attribution.toDataSuffix({ codes: [builderCode] });
+
+      const encodedData = encodeFunctionData({
         abi: drawingNFTAbi,
         functionName: 'mint',
         args: [mintRecipient as `0x${string}`, preparation.metadataIpfsUri],
+      });
+
+      // Manually append the suffix (stripping the '0x' prefix from the suffix)
+      // Note: check if encodedData is 0x prefixed (it is) and dataSuffix is 0x prefixed (it is)
+      const dataWithSuffix = (encodedData + dataSuffix.slice(2)) as `0x${string}`;
+
+      const txHash = await walletClient.sendTransaction({
+        to: drawingNftAddress,
+        data: dataWithSuffix,
+        account: wagmiAddress,
+        chain: walletClient.chain,
       });
 
       if (publicClient) {
@@ -230,13 +245,13 @@ export default function Home() {
                 </button>
               )}
 
-            {/* Wallet Connect Buttons (when not in frame or as additional option) */}
-            {!isInFrame && (
-              <div className="flex items-center gap-2 flex-wrap">
-                <appkit-network-button />
-                <appkit-button />
-              </div>
-            )}
+              {/* Wallet Connect Buttons (when not in frame or as additional option) */}
+              {!isInFrame && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <appkit-network-button />
+                  <appkit-button />
+                </div>
+              )}
             </div>
           </div>
 
