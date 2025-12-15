@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@coinbase/onchainkit": "^1.1.2",
+    "@coinbase/wallet-sdk": "^4.3.7",
     "@farcaster/miniapp-sdk": "^0.2.1",
     "@lighthouse-web3/sdk": "^0.4.3",
     "@pinata/sdk": "^2.1.0",
