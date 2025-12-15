@@ -36,8 +36,8 @@ export const metadata: Metadata = {
     apple: "/icon.png",
   },
   other: {
-    "fc:frame": "vNext", // Standard Farcaster Frame tag
-    "base:app_id": process.env.NEXT_PUBLIC_BASE_APP_ID || "",
+    "fc:frame": "vNext",
+    "base:app_id": "69404fb0d77c069a945bdf24",
   },
 };
 
